@@ -1,0 +1,11 @@
+{
+    "unlocked_agents": [
+        "Brimstone",
+        "Jett",
+        "Phoenix",
+        "Sage",
+        "Sova",
+        "Yoru"
+    ],
+    "default_agent": "Phoenix"
+}
