@@ -1,5 +1,8 @@
-#Pycharm
+# Pycharm
 .idea/
+
+# All test files
+test.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
