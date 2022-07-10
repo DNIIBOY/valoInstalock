@@ -79,10 +79,7 @@ class InstaLocker:
             bg="white"
         )
 
-        locked_agents = []
-        for agent in AGENT_LIST:
-            if agent not in self.unlocked_agents:
-                locked_agents.append(agent)
+        locked_agents = get_locked_agents(self.unlocked_agents)
 
         print("Locked", locked_agents)
 
@@ -156,10 +153,7 @@ class InstaLocker:
         )
 
     def unlock_agent(self, agent_num: int):
-        locked_agents = []
-        for agent in AGENT_LIST:
-            if agent not in self.unlocked_agents:
-                locked_agents.append(agent)
+        locked_agents = get_locked_agents(self.unlocked_agents)
 
         self.unlocked_agents.append(locked_agents[agent_num - len(self.unlocked_agents)])
         self.unlocked_agents = sorted(self.unlocked_agents)
@@ -169,7 +163,10 @@ class InstaLocker:
         )
 
     def lock_agent(self, agent_num: int):
-        self.unlocked_agents.pop(agent_num)
+        agent_name = self.agent_button_list[agent_num].cget("text")
+        self.unlocked_agents.remove(agent_name)
+        print(self.unlocked_agents)
+
         self.agent_button_list[agent_num].configure(
             bg="gray"
         )
@@ -188,18 +185,26 @@ class InstaLocker:
             for i in range(len(self.unlocked_agents)):
                 self.agent_button_list[i].configure(
                     background="lightgray",
-                    command=""
+                    command=lambda num=i: self.lock_agent(num),
                 )
             for i in range(len(self.unlocked_agents), len(AGENT_LIST)):
                 self.agent_button_list[i]["state"] = "normal"
                 self.agent_button_list[i].configure(
-                    background="gray"
+                    background="gray",
                 )
         else:
             for but in self.agent_button_list:
                 but.destroy()
             self.agent_button_list = []
             self.setup_agent_grid()
+
+
+def get_locked_agents(unlocked_agents: list):
+    locked_agents = []
+    for agent in AGENT_LIST:
+        if agent not in unlocked_agents:
+            locked_agents.append(agent)
+    return locked_agents
 
 
 if __name__ == '__main__':
