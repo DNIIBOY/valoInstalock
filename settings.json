@@ -1,10 +1,24 @@
 {
     "unlocked_agents": [
+        "Astra",
+        "Breach",
         "Brimstone",
+        "Chamber",
+        "Cypher",
+        "Fade",
         "Jett",
+        "KAY/O",
+        "Killjoy",
+        "Neon",
+        "Omen",
         "Phoenix",
+        "Raze",
+        "Reyna",
         "Sage",
-        "Sova"
+        "Skye",
+        "Sova",
+        "Viper",
+        "Yoru"
     ],
-    "default_agent": "Jett"
+    "default_agent": "Skye"
 }

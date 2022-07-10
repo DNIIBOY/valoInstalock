@@ -133,8 +133,9 @@ class InstaLocker:
         cog.image = cog_img
         cog.pack()
 
-        default_agents_button = Button(self.settings_frame, text="Default Agents", command=lambda: print("Default Agents"))
-        all_agents_button = Button(self.settings_frame, text="All Agents", command=lambda: print("All Agents"))
+        default_agents_button = Button(self.settings_frame, text="Default Agents", command=lambda: self.set_agent_list(0))
+        all_agents_button = Button(self.settings_frame, text="All Agents", command=lambda: self.set_agent_list(1))
+
         default_agents_button.pack(side=LEFT, padx=10)
         all_agents_button.pack(side=RIGHT, padx=10)
 
@@ -156,7 +157,6 @@ class InstaLocker:
         :param agent_num: Integer representing the index of the agent in the unlocked_agents list
         """
         self.selected_agent = self.unlocked_agents[agent_num]
-        print(self.selected_agent)
         for but in self.agent_button_list[:len(self.unlocked_agents)]:
             but.configure(
                 bg="white"
@@ -166,23 +166,28 @@ class InstaLocker:
         )
 
     def unlock_agent(self, agent_num: int):
-        locked_agents = get_locked_agents(self.unlocked_agents)
+        """
+        Unlocks an agent to be selected by the user.
+        :param agent_num: Integer representing the index of the agent in the agent_buttons list
+        """
+        button_texts = get_button_texts(self.agent_button_list)
 
-        self.unlocked_agents.append(locked_agents[agent_num - len(self.unlocked_agents)])
+        self.unlocked_agents.append(button_texts[agent_num])
         self.unlocked_agents = sorted(self.unlocked_agents)
-        print(self.unlocked_agents)
         self.agent_button_list[agent_num].configure(
             bg="lightgray",
             command=lambda num=agent_num: self.lock_agent(num)
         )
 
     def lock_agent(self, agent_num: int):
-        print(agent_num)
+        """
+        Locks an agent from being selected by the user.
+        :param agent_num: Integer representing the index of the agent in the agent_buttons list
+        """
         agent_name = self.agent_button_list[agent_num].cget("text")
         if agent_name in DEFAULT_AGENTS:
             return
         self.unlocked_agents.remove(agent_name)
-        print(self.unlocked_agents)
 
         self.agent_button_list[agent_num].configure(
             bg="gray",
@@ -192,7 +197,7 @@ class InstaLocker:
     def toggle_settings(self, btn: Button) -> None:
         """
         Toggle settings panel on/off
-        :param btn: Button object
+        :param btn: Button object that will change color when setting are toggled
         """
         if self.show_settings:
             btn.configure(bg="white")
@@ -205,7 +210,7 @@ class InstaLocker:
     def change_agents(self, enable_change: bool) -> None:
         """
         Toggle whether the user can change which agents are unlocked.
-        enable_change: True if the user can change which agents are unlocked, False otherwise.
+        :param enable_change: True if the user can change which agents are unlocked, False otherwise.
         """
         if enable_change:
             for i in range(len(self.unlocked_agents)):
@@ -224,10 +229,27 @@ class InstaLocker:
             self.agent_button_list = []
             self.setup_agent_grid()
 
+    def set_agent_list(self, list_mode: int) -> None:
+        """
+        Set the unlocked_agents list to either the default or all agents and reset the agent grid.
+        :param list_mode: 0 for default agents, 1 for all agents
+        """
+        match list_mode:
+            case 0:
+                self.unlocked_agents = list(DEFAULT_AGENTS)  # Convert to list, to prevent using same reference
+            case 1:
+                self.unlocked_agents = list(AGENT_LIST)  # Convert to list, to prevent using same reference
+
+        for but in self.agent_button_list:
+            but.destroy()
+        self.agent_button_list = []
+        self.setup_agent_grid()
+
 
 def get_locked_agents(unlocked_agents: list) -> list[str]:
     """
     Get a list of all locked agents based on the unlocked_agents list and the global AGENT_LIST
+    :param unlocked_agents: List of unlocked agents
     """
     locked_agents = []
     for agent in AGENT_LIST:
@@ -239,6 +261,7 @@ def get_locked_agents(unlocked_agents: list) -> list[str]:
 def get_button_texts(button_list: list) -> list[str]:
     """
     Get the text of all buttons from a list of buttons
+    :param button_list: List of buttons with text
     """
     texts = []
     for but in button_list:
