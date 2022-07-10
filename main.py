@@ -58,6 +58,9 @@ class InstaLocker:
         self.agent_button_list = []  # Contains button objects for all agents
 
     def start(self):
+        """
+        Start the program
+        """
         self.setup_main_window()
         self.setup_agent_grid()
         self.agent_canvas.pack(pady=25)
@@ -66,7 +69,7 @@ class InstaLocker:
 
         self.main_window.mainloop()
 
-    def setup_main_window(self):
+    def setup_main_window(self) -> None:
         self.main_window.title("Valorant Instalocker")
         self.main_window.minsize(480, 270)
         self.main_window.geometry("640x360")  # Default size
@@ -74,14 +77,12 @@ class InstaLocker:
         title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Georgia 30", bg="#000000")
         title.pack(pady=10)
 
-    def setup_agent_grid(self):
+    def setup_agent_grid(self) -> None:
         self.agent_canvas.configure(
             bg="white"
         )
 
         locked_agents = get_locked_agents(self.unlocked_agents)
-
-        print("Locked", locked_agents)
 
         i = 0
         for y in range(2):
@@ -122,7 +123,7 @@ class InstaLocker:
         except ValueError:
             self.agent_button_list[0].configure(bg="black")
 
-    def setup_settings_panel(self):
+    def setup_settings_panel(self) -> None:
         self.settings_frame.pack()
         self.settings_canvas.pack()
         img = PhotoImage(file="img/redcog.png")
@@ -132,7 +133,15 @@ class InstaLocker:
         cog.image = cog_img
         cog.pack()
 
-    def update_settings_file(self):
+        default_agents_button = Button(self.settings_frame, text="Default Agents", command=lambda: print("Default Agents"))
+        all_agents_button = Button(self.settings_frame, text="All Agents", command=lambda: print("All Agents"))
+        default_agents_button.pack(side=LEFT, padx=10)
+        all_agents_button.pack(side=RIGHT, padx=10)
+
+    def update_settings_file(self) -> None:
+        """
+        Update settings file with current settings
+        """
         self.unlocked_agents = sorted(self.unlocked_agents)
         self.settings["unlocked_agents"] = self.unlocked_agents
         self.settings["default_agent"] = self.selected_agent
@@ -141,7 +150,11 @@ class InstaLocker:
         with open("settings.json", "w") as settings_file:
             settings_file.write(json_object)
 
-    def select_agent(self, agent_num: int):
+    def select_agent(self, agent_num: int) -> None:
+        """
+        Selects which agent should be instalocked by the program
+        :param agent_num: Integer representing the index of the agent in the unlocked_agents list
+        """
         self.selected_agent = self.unlocked_agents[agent_num]
         print(self.selected_agent)
         for but in self.agent_button_list[:len(self.unlocked_agents)]:
@@ -159,19 +172,28 @@ class InstaLocker:
         self.unlocked_agents = sorted(self.unlocked_agents)
         print(self.unlocked_agents)
         self.agent_button_list[agent_num].configure(
-            bg="lightgray"
+            bg="lightgray",
+            command=lambda num=agent_num: self.lock_agent(num)
         )
 
     def lock_agent(self, agent_num: int):
+        print(agent_num)
         agent_name = self.agent_button_list[agent_num].cget("text")
+        if agent_name in DEFAULT_AGENTS:
+            return
         self.unlocked_agents.remove(agent_name)
         print(self.unlocked_agents)
 
         self.agent_button_list[agent_num].configure(
-            bg="gray"
+            bg="gray",
+            command=lambda num=agent_num: self.unlock_agent(num)
         )
 
-    def toggle_settings(self, btn: Button):
+    def toggle_settings(self, btn: Button) -> None:
+        """
+        Toggle settings panel on/off
+        :param btn: Button object
+        """
         if self.show_settings:
             btn.configure(bg="white")
             self.show_settings = False
@@ -180,7 +202,11 @@ class InstaLocker:
             self.show_settings = True
         self.change_agents(self.show_settings)
 
-    def change_agents(self, enable_change: bool):
+    def change_agents(self, enable_change: bool) -> None:
+        """
+        Toggle whether the user can change which agents are unlocked.
+        enable_change: True if the user can change which agents are unlocked, False otherwise.
+        """
         if enable_change:
             for i in range(len(self.unlocked_agents)):
                 self.agent_button_list[i].configure(
@@ -199,12 +225,25 @@ class InstaLocker:
             self.setup_agent_grid()
 
 
-def get_locked_agents(unlocked_agents: list):
+def get_locked_agents(unlocked_agents: list) -> list[str]:
+    """
+    Get a list of all locked agents based on the unlocked_agents list and the global AGENT_LIST
+    """
     locked_agents = []
     for agent in AGENT_LIST:
         if agent not in unlocked_agents:
             locked_agents.append(agent)
     return locked_agents
+
+
+def get_button_texts(button_list: list) -> list[str]:
+    """
+    Get the text of all buttons from a list of buttons
+    """
+    texts = []
+    for but in button_list:
+        texts.append(but.cget("text"))
+    return texts
 
 
 if __name__ == '__main__':
