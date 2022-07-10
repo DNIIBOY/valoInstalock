@@ -79,8 +79,6 @@ class InstaLocker:
             bg="white"
         )
 
-        self.agent_canvas.delete("all")
-
         locked_agents = []
         for agent in AGENT_LIST:
             if agent not in self.unlocked_agents:
@@ -131,10 +129,10 @@ class InstaLocker:
         self.settings_frame.pack()
         self.settings_canvas.pack()
         img = PhotoImage(file="img/redcog.png")
-        cogimg = img.subsample(3, 3)
+        cog_img = img.subsample(3, 3)
 
-        cog = Button(self.main_window, image=cogimg, command=lambda: self.toggle_settings(cog))
-        cog.image = cogimg
+        cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings(cog))
+        cog.image = cog_img
         cog.pack()
 
     def update_settings_file(self):
@@ -170,6 +168,12 @@ class InstaLocker:
             bg="lightgray"
         )
 
+    def lock_agent(self, agent_num: int):
+        self.unlocked_agents.pop(agent_num)
+        self.agent_button_list[agent_num].configure(
+            bg="gray"
+        )
+
     def toggle_settings(self, btn: Button):
         if self.show_settings:
             btn.configure(bg="white")
@@ -183,7 +187,8 @@ class InstaLocker:
         if enable_change:
             for i in range(len(self.unlocked_agents)):
                 self.agent_button_list[i].configure(
-                    background="lightgray"
+                    background="lightgray",
+                    command=""
                 )
             for i in range(len(self.unlocked_agents), len(AGENT_LIST)):
                 self.agent_button_list[i]["state"] = "normal"
@@ -191,6 +196,9 @@ class InstaLocker:
                     background="gray"
                 )
         else:
+            for but in self.agent_button_list:
+                but.destroy()
+            self.agent_button_list = []
             self.setup_agent_grid()
 
 
