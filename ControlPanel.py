@@ -155,6 +155,13 @@ class ControlPanel:
         :param agent_num: Integer representing the index of the agent in the unlocked_agents list
         """
         self.selected_agent = self.unlocked_agents[agent_num]
+
+        # Set agent num for currently running instalocker, if there is one
+        try:
+            self.IL.agent_num = agent_num
+        except AttributeError:
+            pass
+
         for but in self.agent_button_list[:len(self.unlocked_agents)]:
             but.configure(
                 bg="white"

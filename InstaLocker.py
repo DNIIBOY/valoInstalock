@@ -27,13 +27,13 @@ class InstaLocker:
         self.is_active = True
 
         # Prepare agent select coordinates
-        self.calculate_agent_location()
 
         # Wait for agent select screen
         if not self.wait_for_agent_select():
             # Return false if search was interrupted
             return False
 
+        self.calculate_agent_location()
         self.instalock()
 
         return True
@@ -42,14 +42,17 @@ class InstaLocker:
         """
         Calculate the coordinates for agent select
         """
-        self.agent_x = 626
+        agent_offset = 84  # Pixel gap between agents
+        self.agent_x = 582
         self.agent_y = 925
 
         if 0 < self.agent_num < (len(AGENT_LIST) // 2) + 1:
-            self.agent_x = self.agent_x + 85 * (self.agent_num - 1)
-        elif (len(AGENT_LIST // 2) + 1) < self.agent_num < len(AGENT_LIST) - 1:
-            self.agent_x = self.agent_x + 85 * (self.agent_num - 10)
-            self.agent_y = self.agent_y + 85
+            self.agent_x = self.agent_x + agent_offset * (self.agent_num - 1)
+        elif (len(AGENT_LIST) // 2 + 1) < self.agent_num < len(AGENT_LIST):
+            self.agent_x = self.agent_x + agent_offset * (self.agent_num - 10)
+            self.agent_y = 1010
+        print(self.agent_num)
+        print(self.agent_x, self.agent_y)
 
     def wait_for_agent_select(self) -> bool:
         """
@@ -57,6 +60,7 @@ class InstaLocker:
         :return: Boolean, returns true if agent select is found, returns false if interrupted
         """
         while self.is_active:
+            print("waiting")
             # Get pixel locations from constants file
             box0 = PIXEL_LOCATIONS["select_screen_0"]
             box1 = PIXEL_LOCATIONS["select_screen_1"]
