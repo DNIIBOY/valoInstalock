@@ -60,7 +60,8 @@ class ControlPanel:
         """
         self.main_window.title("Valorant Instalocker")
         self.main_window.minsize(480, 270)
-        self.main_window.geometry("640x360")  # Default size
+        self.main_window.maxsize(960, 540)
+        self.main_window.geometry("768x432")  # Default size
 
         title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Georgia 30", bg="#000000")
         title.pack(pady=10)
