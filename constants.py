@@ -31,8 +31,8 @@ DEFAULT_SETTINGS = {
 
 # Pixel locations for detection pictures
 PIXEL_LOCATIONS = {
-    "select_screen_0": (841, 784),
-    "select_screen_1": (950, 866),
+    "select_screen_0": (841, 784),  # Top left corner of "lock in" button
+    "select_screen_1": (950, 866),  # Yellow arrow above agents
 }
 
 # RGB values for detection pictures

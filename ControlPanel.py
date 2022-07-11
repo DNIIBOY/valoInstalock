@@ -134,7 +134,15 @@ class ControlPanel:
         default_agents_button.pack(side=LEFT, padx=10)
         all_agents_button.pack(side=RIGHT, padx=10)
 
-        run_button = Button(self.main_window, text="Run", command=lambda: self.start_instalocker())
+        run_button = Button(
+            self.main_window,
+            text="Run",
+            command=lambda: self.start_instalocker(run_button),
+            height=2,
+            width=12,
+            bg="#79c7c0",
+            fg="#000000",
+        )
         run_button.pack(side=BOTTOM)
 
     def update_settings_file(self) -> None:
@@ -250,14 +258,35 @@ class ControlPanel:
         self.agent_button_list = []
         self.setup_agent_grid()
 
-    def start_instalocker(self) -> None:
+    def start_instalocker(self, but: Button) -> None:
         """
         Run the instalocker program
+        :param but: Button object that will change when instalocker starts
         """
         self.is_running = True
         agent_num = self.unlocked_agents.index(self.selected_agent)
         self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num,))
         self.IL_thread.start()
+        but.configure(
+            text="Stop",
+            command=lambda: self.stop_instalocker(but),
+        )
+
+    def stop_instalocker(self, but: Button) -> None:
+        """
+        Stop the instalocker program
+        :param but: Button object that will change when instalocker stops
+        """
+        try:
+            self.IL.is_active = False
+        except AttributeError:
+            # If the instalocker thread has not been started yet, do nothing.
+            pass
+
+        but.configure(
+            text="Run",
+            command=lambda: self.start_instalocker(but),
+        )
 
     def run_instalocker(self, agent_num: int):
         """
@@ -266,13 +295,6 @@ class ControlPanel:
         """
         self.IL = InstaLocker(agent_num)
         self.IL.run()
-
-    def stop_instalocker(self) -> None:
-        try:
-            self.IL.is_active = False
-        except AttributeError:
-            # If the instalocker thread has not been started yet, do nothing.
-            pass
 
 
 def get_settings():
