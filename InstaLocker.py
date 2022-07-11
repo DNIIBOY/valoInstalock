@@ -8,12 +8,14 @@ class InstaLocker:
         :param agent_num: The number of the agent, left to right, top to bottom, on the users' agent select screen
         """
         self.agent_num = agent_num
+        self.is_active = False
 
     def run(self) -> bool:
         """
         Run the instalocker program
         :return: Boolean, of whether the program was successfully locked the agent or not
         """
+        self.is_active = True
         try:
             self.wait_for_loading_screen()
             self.instalock()
@@ -23,9 +25,8 @@ class InstaLocker:
         except:
             return False
 
-    @staticmethod
-    def wait_for_loading_screen():
-        while True:
+    def wait_for_loading_screen(self):
+        while self.is_active:
             print("shee")
             img = ImageGrab.grab(bbox=(841, 784, 842, 785))
             img2 = ImageGrab.grab(bbox=(950, 866, 951, 867))
