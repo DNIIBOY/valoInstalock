@@ -55,6 +55,9 @@ class ControlPanel:
         self.main_window.mainloop()
 
     def setup_main_window(self) -> None:
+        """
+        Set up the main window, including title and size
+        """
         self.main_window.title("Valorant Instalocker")
         self.main_window.minsize(480, 270)
         self.main_window.geometry("640x360")  # Default size
@@ -63,6 +66,9 @@ class ControlPanel:
         title.pack(pady=10)
 
     def setup_agent_grid(self) -> None:
+        """
+        Set up the agent grid
+        """
         self.agent_canvas.configure(
             bg="white"
         )
@@ -109,6 +115,9 @@ class ControlPanel:
             self.agent_button_list[0].configure(bg="black")
 
     def setup_settings_panel(self) -> None:
+        """
+        Set up the settings panel
+        """
         self.settings_frame.pack()
         self.settings_canvas.pack()
         img = PhotoImage(file="img/redcog.png")
@@ -242,9 +251,6 @@ class ControlPanel:
         self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num,))
         self.IL_thread.start()
 
-    def stop_instalocker(self) -> None:
-        self.IL.is_active = False
-
     def run_instalocker(self, agent_num: int):
         """
         Run the instalocker program as a separate thread
@@ -252,6 +258,13 @@ class ControlPanel:
         """
         self.IL = InstaLocker(agent_num)
         self.IL.run()
+
+    def stop_instalocker(self) -> None:
+        try:
+            self.IL.is_active = False
+        except AttributeError:
+            # If the instalocker thread has not been started yet, do nothing.
+            pass
 
 
 def get_settings():
