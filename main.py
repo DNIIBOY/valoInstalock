@@ -1,6 +1,8 @@
-from tkinter import *
-from PIL import ImageTk, Image, ImageGrab
 import json
+import threading
+
+from tkinter import *
+from InstaLocker import InstaLocker
 
 AGENT_LIST = [
     "Astra",
@@ -26,7 +28,7 @@ AGENT_LIST = [
 DEFAULT_AGENTS = ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"]
 
 
-class InstaLocker:
+class ControlPanel:
     def __init__(self):
         self.main_window = Tk()  # Root window
 
@@ -51,6 +53,9 @@ class InstaLocker:
                 "default_agent": "Brimstone"
             }
         self.show_settings = False
+
+        self.is_running = False
+        self.IL_thread = None  # Thread for running actual instalocker
 
         self.unlocked_agents = self.settings["unlocked_agents"]
         self.selected_agent = self.settings["default_agent"]
@@ -138,6 +143,9 @@ class InstaLocker:
 
         default_agents_button.pack(side=LEFT, padx=10)
         all_agents_button.pack(side=RIGHT, padx=10)
+
+        run_button = Button(self.main_window, text="Run", command=lambda: self.start_instalocker())
+        run_button.pack(side=BOTTOM)
 
     def update_settings_file(self) -> None:
         """
@@ -245,6 +253,27 @@ class InstaLocker:
         self.agent_button_list = []
         self.setup_agent_grid()
 
+    def start_instalocker(self) -> None:
+        """
+        Run the instalocker program
+        """
+        self.is_running = True
+        agent_num = self.unlocked_agents.index(self.selected_agent)
+        self.IL_thread = threading.Thread(target=run_instalocker, args=(agent_num,))
+        self.IL_thread.start()
+
+    def stop_instalocker(self) -> None:
+        self.IL_thread.join()
+
+
+def run_instalocker(agent_num: int):
+    """
+    Run the instalocker program as a separate thread
+    :param agent_num: Integer representing the index of the agent in the users' agent lock screen
+    """
+    IL = InstaLocker(agent_num)
+    IL.run()
+
 
 def get_locked_agents(unlocked_agents: list) -> list[str]:
     """
@@ -270,7 +299,7 @@ def get_button_texts(button_list: list) -> list[str]:
 
 
 if __name__ == '__main__':
-    IL = InstaLocker()
-    # IL.unlocked_agents = DEFAULT_AGENTS
-    IL.start()
-    IL.update_settings_file()
+    CP = ControlPanel()
+    # CP.unlocked_agents = DEFAULT_AGENTS
+    CP.start()
+    CP.update_settings_file()
