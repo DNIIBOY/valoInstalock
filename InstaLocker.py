@@ -2,7 +2,7 @@ import pyautogui
 from PIL import ImageGrab
 from time import sleep
 
-from constants import PIXEL_LOCATIONS, RGB_VALUES, CLICK_LOCATIONS
+from constants import *
 
 
 class InstaLocker:
@@ -42,7 +42,14 @@ class InstaLocker:
         """
         Calculate the coordinates for agent select
         """
-        pass
+        self.agent_x = 626
+        self.agent_y = 925
+
+        if 0 < self.agent_num < (len(AGENT_LIST) // 2) + 1:
+            self.agent_x = self.agent_x + 85 * (self.agent_num - 1)
+        elif (len(AGENT_LIST // 2) + 1) < self.agent_num < len(AGENT_LIST) - 1:
+            self.agent_x = self.agent_x + 85 * (self.agent_num - 10)
+            self.agent_y = self.agent_y + 85
 
     def wait_for_agent_select(self) -> bool:
         """
