@@ -1,6 +1,7 @@
 import json
 import threading
 import os
+import time
 
 from tkinter import *
 from constants import *
@@ -11,26 +12,14 @@ class ControlPanel:
     def __init__(self):
         self.main_window = Tk()  # Root window
 
-        # Setup background image
-        background_image = PhotoImage(file="img/iceboxBackground.png")
-        background_label = Label(self.main_window, image=background_image)
-        background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        background_label.image = background_image  # Fixes issue with lost reference for image
+        # Setup label for background image
+        background_label = Label(self.main_window)
 
         self.agent_canvas = Canvas(self.main_window, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self.main_window, height=100, width=600)  # Canvas for settings and settings button
-        self.settings_frame = Frame(self.settings_canvas, bg="#000000")  # Frame hidden settings
+        self.internal_settings_canvas = Canvas(self.settings_canvas)  # Canvas that toggles with settings
 
-        try:
-            # Load settings from json file
-            with open("settings.json", "r") as settings_file:
-                self.settings = json.load(settings_file)
-        except FileNotFoundError:
-            # Use default settings if no settings file exists
-            self.settings = {
-                "unlocked_agents": ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"],
-                "default_agent": "Brimstone"
-            }
+        self.settings = get_settings("settings.json")
         self.show_settings = False  # Whether the settings panel is shown
 
         self.is_running = False
@@ -42,13 +31,20 @@ class ControlPanel:
 
         self.agent_button_list = []  # Contains button objects for all agents
 
+        # All miscellaneous buttons and labels
+        self.UI_elements = {
+            "background_label": background_label,
+        }
+
+        # All buttons in the settings panel
+        self.settings_buttons = {}
+
     def start(self):
         """
         Start the program
         """
         self.setup_main_window()
         self.setup_agent_grid()
-        self.agent_canvas.pack(pady=25)
 
         self.setup_settings_panel()
 
@@ -61,7 +57,16 @@ class ControlPanel:
         self.main_window.title("Valorant Instalocker")
         self.main_window.minsize(480, 270)
         self.main_window.maxsize(960, 540)
-        self.main_window.geometry("768x432")  # Default size
+        self.main_window.geometry("960x540")  # Default size
+
+        # Setup background image
+        background_image = PhotoImage(file="img/iceboxBackground.png")
+        background_label = self.UI_elements["background_label"]
+        background_label.configure(
+            image=background_image
+        )
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        background_label.image = background_image  # Fixes issue with lost reference for image
 
         title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Georgia 30", bg="#000000")
         title.pack(pady=10)
@@ -87,7 +92,7 @@ class ControlPanel:
                             self.agent_canvas,
                             text=self.unlocked_agents[i],
                             height=3,
-                            width=7,
+                            width=8,
                             background="white",
                             foreground="#ff4b50",
                             command=lambda num=i: self.select_agent(num),
@@ -99,7 +104,7 @@ class ControlPanel:
                             self.agent_canvas,
                             text=locked_agents[i - len(self.unlocked_agents)],
                             height=3,
-                            width=7,
+                            width=8,
                             background="white",
                             foreground="#ff4b50",
                             command=lambda num=i: self.unlock_agent(num),
@@ -110,6 +115,9 @@ class ControlPanel:
                 self.agent_button_list[i].grid(column=x, row=y, padx=1, pady=1)
                 i += 1
 
+        self.agent_canvas.pack(pady=25)
+
+        # Select default agent
         try:
             self.agent_button_list[self.unlocked_agents.index(self.selected_agent)].configure(bg="black")
         except ValueError:
@@ -119,31 +127,47 @@ class ControlPanel:
         """
         Set up the settings panel
         """
-        self.settings_frame.pack()
         self.settings_canvas.pack()
+
+        self.internal_settings_canvas.configure(
+            height=4,
+            width=200,
+            bg="black"
+        )
+        self.internal_settings_canvas.pack()
+
         img = PhotoImage(file="img/redcog.png")
         cog_img = img.subsample(3, 3)
 
-        cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings(cog))
-        cog.image = cog_img
-        cog.pack()
+        settings_cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings())
+        settings_cog.image = cog_img
+        settings_cog.pack(pady=10)
+        self.UI_elements["settings_cog"] = settings_cog
 
-        default_agents_button = Button(self.settings_frame, text="Default Agents", command=lambda: self.set_agent_list(0))
-        all_agents_button = Button(self.settings_frame, text="All Agents", command=lambda: self.set_agent_list(1))
+        default_agents_button = Button(self.internal_settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
+        all_agents_button = Button(self.internal_settings_canvas, text="All Agents", command=lambda: self.set_agent_list(1))
 
-        default_agents_button.pack(side=LEFT, padx=10)
-        all_agents_button.pack(side=RIGHT, padx=10)
+        default_agents_button.grid(column=0, row=0, padx=10, pady=10)
+        all_agents_button.grid(column=1, row=0, padx=10, pady=10)
+
+        self.settings_buttons["default_agents_button"] = default_agents_button
+        self.settings_buttons["all_agents_button"] = all_agents_button
+
+        # Hide settings by default
+        for key in self.settings_buttons:
+            self.settings_buttons[key].grid_remove()
 
         run_button = Button(
             self.main_window,
             text="Run",
-            command=lambda: self.start_instalocker(run_button),
+            command=lambda: self.start_instalocker(),
             height=2,
             width=12,
             bg="#79c7c0",
             fg="#000000",
         )
-        run_button.pack(side=BOTTOM)
+        run_button.pack(side=BOTTOM, pady=25)
+        self.UI_elements["run_button"] = run_button
 
     def update_settings_file(self) -> None:
         """
@@ -207,17 +231,21 @@ class ControlPanel:
             command=lambda num=agent_num: self.unlock_agent(num)
         )
 
-    def toggle_settings(self, btn: Button) -> None:
+    def toggle_settings(self) -> None:
         """
         Toggle settings panel on/off
-        :param btn: Button object that will change color when setting are toggled
         """
+        settings_cog = self.UI_elements["settings_cog"]
         if self.show_settings:
-            btn.configure(bg="white")
+            settings_cog.configure(bg="white")
             self.show_settings = False
+            for key in self.settings_buttons:
+                self.settings_buttons[key].grid_remove()
         else:
-            btn.configure(bg="black")
+            settings_cog.configure(bg="black")
             self.show_settings = True
+            for key in self.settings_buttons:
+                self.settings_buttons[key].grid()
         self.change_agents(self.show_settings)
 
     def change_agents(self, enable_change: bool) -> None:
@@ -253,29 +281,29 @@ class ControlPanel:
             case 1:
                 self.unlocked_agents = list(AGENT_LIST)  # Convert to list, to prevent using same reference
 
+        self.toggle_settings()
         for but in self.agent_button_list:
             but.destroy()
         self.agent_button_list = []
         self.setup_agent_grid()
 
-    def start_instalocker(self, but: Button) -> None:
+    def start_instalocker(self) -> None:
         """
         Run the instalocker program
-        :param but: Button object that will change when instalocker starts
         """
         self.is_running = True
         agent_num = self.unlocked_agents.index(self.selected_agent)
         self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num,))
         self.IL_thread.start()
-        but.configure(
+        run_button = self.UI_elements["run_button"]
+        run_button.configure(
             text="Stop",
-            command=lambda: self.stop_instalocker(but),
+            command=lambda: self.stop_instalocker(),
         )
 
-    def stop_instalocker(self, but: Button) -> None:
+    def stop_instalocker(self) -> None:
         """
         Stop the instalocker program
-        :param but: Button object that will change when instalocker stops
         """
         try:
             self.IL.is_active = False
@@ -283,9 +311,10 @@ class ControlPanel:
             # If the instalocker thread has not been started yet, do nothing.
             pass
 
-        but.configure(
+        run_button = self.UI_elements["run_button"]
+        run_button.configure(
             text="Run",
-            command=lambda: self.start_instalocker(but),
+            command=lambda: self.start_instalocker(),
         )
 
     def run_instalocker(self, agent_num: int):
@@ -295,17 +324,19 @@ class ControlPanel:
         """
         self.IL = InstaLocker(agent_num)
         self.IL.run()
+        self.stop_instalocker()
 
 
-def get_settings():
+def get_settings(path: str):
     """
     Get the settings from the settings file, or create a new settings file if it doesn't exist.
+    :param path: Path to the settings file
     :return: Dictionary containing the settings
     """
-    if not os.path.exists("settings.json"):
-        with open("settings.json", "w") as settings_file:
+    if not os.path.exists(path):
+        with open(path, "w") as settings_file:
             settings_file.write(json.dumps(DEFAULT_SETTINGS, indent=4))
-    with open("settings.json", "r") as settings_file:
+    with open(path, "r") as settings_file:
         return json.load(settings_file)
 
 
@@ -330,11 +361,3 @@ def get_button_texts(button_list: list) -> list[str]:
     for but in button_list:
         texts.append(but.cget("text"))
     return texts
-
-
-if __name__ == '__main__':
-    CP = ControlPanel()
-    # CP.unlocked_agents = DEFAULT_AGENTS
-    CP.start()
-    CP.stop_instalocker()
-    CP.update_settings_file()
