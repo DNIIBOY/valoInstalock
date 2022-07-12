@@ -1,7 +1,6 @@
 import json
 import threading
 import os
-import time
 
 from tkinter import *
 from constants import *
@@ -22,12 +21,8 @@ class ControlPanel:
         self.settings = get_settings("settings.json")
         self.show_settings = False  # Whether the settings panel is shown
 
-        self.is_running = False
         self.IL = None  # Object of instalocker class, for instalocking
         self.IL_thread = None  # Thread for running actual instalocker
-
-        self.unlocked_agents = self.settings["unlocked_agents"]
-        self.selected_agent = self.settings["default_agent"]
 
         self.agent_button_list = []  # Contains button objects for all agents
 
@@ -80,18 +75,18 @@ class ControlPanel:
             bg="white"
         )
 
-        locked_agents = get_locked_agents(self.unlocked_agents)
+        locked_agents = get_locked_agents(self.settings["unlocked_agents"])
 
         i = 0
         for y in range(2):
             # Account for extra agent on top row, when there is and odd agent count
             odd_offset = int(len(AGENT_LIST) % 2 == 1 and y == 0)
             for x in range((len(AGENT_LIST) // 2) + odd_offset):
-                if i < len(self.unlocked_agents):  # All unlocked agents first
+                if i < len(self.settings["unlocked_agents"]):  # All unlocked agents first
                     self.agent_button_list.append(
                         Button(
                             self.agent_canvas,
-                            text=self.unlocked_agents[i],
+                            text=self.settings["unlocked_agents"][i],
                             height=3,
                             width=8,
                             background="white",
@@ -103,7 +98,7 @@ class ControlPanel:
                     self.agent_button_list.append(
                         Button(
                             self.agent_canvas,
-                            text=locked_agents[i - len(self.unlocked_agents)],
+                            text=locked_agents[i - len(self.settings["unlocked_agents"])],
                             height=3,
                             width=8,
                             background="white",
@@ -120,7 +115,7 @@ class ControlPanel:
 
         # Select default agent
         try:
-            self.agent_button_list[self.unlocked_agents.index(self.selected_agent)].configure(bg="black")
+            self.agent_button_list[self.settings["unlocked_agents"].index(self.settings["selected_agent"])].configure(bg="black")
         except ValueError:
             self.agent_button_list[0].configure(bg="black")
 
@@ -145,14 +140,29 @@ class ControlPanel:
         settings_cog.pack(pady=10)
         self.UI_elements["settings_cog"] = settings_cog
 
-        default_agents_button = Button(self.internal_settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
+        selected_agents_button = Button(self.internal_settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
         all_agents_button = Button(self.internal_settings_canvas, text="All Agents", command=lambda: self.set_agent_list(1))
 
-        default_agents_button.grid(column=0, row=0, padx=10, pady=10)
-        all_agents_button.grid(column=1, row=0, padx=10, pady=10)
+        delay_entry_label = Label(self.internal_settings_canvas, text="Delay:", bg="black", fg="white")
+        validation = self.main_window.register(float_validation)  # Only allow float characters
 
-        self.settings_buttons["default_agents_button"] = default_agents_button
+        img_delay_entry = Entry(
+            self.internal_settings_canvas,
+            validate="key",
+            validatecommand=(validation, "%S"),
+            width=5,
+        )
+        img_delay_entry.insert(0, str(self.settings["img_delay_time"]))
+
+        selected_agents_button.grid(column=0, row=0, padx=10, pady=10)
+        all_agents_button.grid(column=1, row=0, padx=10, pady=10)
+        delay_entry_label.grid(column=2, row=0, padx=2, pady=10)
+        img_delay_entry.grid(column=3, row=0, padx=10, pady=10)
+
+        self.settings_buttons["selected_agents_button"] = selected_agents_button
         self.settings_buttons["all_agents_button"] = all_agents_button
+        self.settings_buttons["delay_entry_label"] = delay_entry_label
+        self.settings_buttons["img_delay_entry"] = img_delay_entry
 
         # Hide settings by default
         for key in self.settings_buttons:
@@ -182,20 +192,33 @@ class ControlPanel:
         """
         Update settings file with current settings
         """
-        self.unlocked_agents = sorted(self.unlocked_agents)
-        self.settings["unlocked_agents"] = self.unlocked_agents
-        self.settings["default_agent"] = self.selected_agent
+        self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
 
         json_object = json.dumps(self.settings, indent=4)
         with open("settings.json", "w") as settings_file:
             settings_file.write(json_object)
+
+    def update_delay(self, sv: StringVar) -> None:
+        """
+        Update the img_delay_time setting
+        :param sv: StringVar object from entry
+        """
+        val = sv.get()
+        if val == "":
+            val = 0.0
+        elif val.count(".") > 1:
+            val = val.replace(".", "")
+        val = float(val)
+        if val < 0.0:
+            val = 0.0
+        self.settings["img_delay_time"] = val
 
     def select_agent(self, agent_num: int) -> None:
         """
         Selects which agent should be instalocked by the program
         :param agent_num: Integer representing the index of the agent in the unlocked_agents list
         """
-        self.selected_agent = self.unlocked_agents[agent_num]
+        self.settings["selected_agent"] = self.settings["unlocked_agents"][agent_num]
 
         # Set agent num for currently running instalocker, if there is one
         try:
@@ -203,7 +226,7 @@ class ControlPanel:
         except AttributeError:
             pass
 
-        for but in self.agent_button_list[:len(self.unlocked_agents)]:
+        for but in self.agent_button_list[:len(self.settings["unlocked_agents"])]:
             but.configure(
                 bg="white"
             )
@@ -218,8 +241,8 @@ class ControlPanel:
         """
         button_texts = get_button_texts(self.agent_button_list)
 
-        self.unlocked_agents.append(button_texts[agent_num])
-        self.unlocked_agents = sorted(self.unlocked_agents)
+        self.settings["unlocked_agents"].append(button_texts[agent_num])
+        self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
         self.agent_button_list[agent_num].configure(
             bg="lightgray",
             command=lambda num=agent_num: self.lock_agent(num)
@@ -233,7 +256,7 @@ class ControlPanel:
         agent_name = self.agent_button_list[agent_num].cget("text")
         if agent_name in DEFAULT_AGENTS:
             return
-        self.unlocked_agents.remove(agent_name)
+        self.settings["unlocked_agents"].remove(agent_name)
 
         self.agent_button_list[agent_num].configure(
             bg="gray",
@@ -244,6 +267,10 @@ class ControlPanel:
         """
         Toggle settings panel on/off
         """
+        try:
+            self.settings["img_delay_time"] = float(self.settings_buttons["img_delay_entry"].get())
+        except ValueError:
+            self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
         settings_cog = self.UI_elements["settings_cog"]
         if self.show_settings:
             settings_cog.configure(bg="white")
@@ -263,12 +290,12 @@ class ControlPanel:
         :param enable_change: True if the user can change which agents are unlocked, False otherwise.
         """
         if enable_change:
-            for i in range(len(self.unlocked_agents)):
+            for i in range(len(self.settings["unlocked_agents"])):
                 self.agent_button_list[i].configure(
                     background="lightgray",
                     command=lambda num=i: self.lock_agent(num),
                 )
-            for i in range(len(self.unlocked_agents), len(AGENT_LIST)):
+            for i in range(len(self.settings["unlocked_agents"]), len(AGENT_LIST)):
                 self.agent_button_list[i]["state"] = "normal"
                 self.agent_button_list[i].configure(
                     background="gray",
@@ -286,9 +313,9 @@ class ControlPanel:
         """
         match list_mode:
             case 0:
-                self.unlocked_agents = list(DEFAULT_AGENTS)  # Convert to list, to prevent using same reference
+                self.settings["unlocked_agents"] = list(DEFAULT_AGENTS)  # Convert to list, to prevent using same reference
             case 1:
-                self.unlocked_agents = list(AGENT_LIST)  # Convert to list, to prevent using same reference
+                self.settings["unlocked_agents"] = list(AGENT_LIST)  # Convert to list, to prevent using same reference
 
         self.toggle_settings()
         for but in self.agent_button_list:
@@ -300,9 +327,12 @@ class ControlPanel:
         """
         Run the instalocker program
         """
-        self.is_running = True
-        agent_num = self.unlocked_agents.index(self.selected_agent)
-        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num,))
+        try:
+            self.settings["img_delay_time"] = float(self.settings_buttons["img_delay_entry"].get())
+        except ValueError:
+            self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
+        agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
+        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num, self.settings["img_delay_time"]))
         self.IL_thread.start()
         run_button = self.UI_elements["run_button"]
         run_button.configure(
@@ -336,12 +366,13 @@ class ControlPanel:
             fg="lightgreen"
         )
 
-    def run_instalocker(self, agent_num: int):
+    def run_instalocker(self, agent_num: int, img_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
+        :param img_delay_time: Float representing the time between grabbing images in seconds
         """
-        self.IL = InstaLocker(agent_num)
+        self.IL = InstaLocker(agent_num, img_delay_time)
         self.IL.run()
         self.stop_instalocker()
 
@@ -380,3 +411,18 @@ def get_button_texts(button_list: list) -> list[str]:
     for but in button_list:
         texts.append(but.cget("text"))
     return texts
+
+
+def float_validation(text: str) -> bool:
+    """
+    Validate that a char is a valid float character
+    :param text: String to validate
+    :return: True if the string is a valid float, False otherwise
+    """
+    if text == ".":
+        return True
+    try:
+        float(text)
+        return True
+    except ValueError:
+        return False

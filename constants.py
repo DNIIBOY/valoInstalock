@@ -26,7 +26,8 @@ DEFAULT_AGENTS = ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"]
 # Default settings file contents
 DEFAULT_SETTINGS = {
     "unlocked_agents": DEFAULT_AGENTS,
-    "default_agent": "Brimstone"
+    "selected_agent": "Brimstone",
+    "img_delay_time": 1.0,
 }
 
 # Pixel locations for detection pictures
