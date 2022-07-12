@@ -4,5 +4,8 @@ if __name__ == '__main__':
     CP = ControlPanel()
     # CP.unlocked_agents = DEFAULT_AGENTS
     CP.start()
-    CP.stop_instalocker()
+    try:
+        CP.stop_instalocker()
+    except:  # Fix issue with crash while closing
+        pass
     CP.update_settings_file()
