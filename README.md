@@ -1,4 +1,7 @@
-<span align="center">![Instalocker Logo](https://user-images.githubusercontent.com/32793938/178528272-1dffe953-b681-4622-ade3-8f8b0b5bdfcc.png)</span>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/32793938/178528272-1dffe953-b681-4622-ade3-8f8b0b5bdfcc.png" alt="Valorant Instalocker"/>
+</p>
+
 
 <h2 align="center">Valorant Instalocker</h2>
 
