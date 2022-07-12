@@ -25,6 +25,7 @@ Extract the contents into your preferred install-location. Next, create a deskto
 ![image](https://user-images.githubusercontent.com/32793938/178540212-b5494df4-101f-47cc-a251-6834d2e0f8fb.png)
 
 #### Manual installation
+This project uses python 3.10
 If you wish to use the uncompiled version simply write these commands in the terminal:
 ```sh
 git clone https://github.com/DNIIBOY/valoInstalock/edit/main/README.md
