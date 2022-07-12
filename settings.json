@@ -20,5 +20,6 @@
         "Viper",
         "Yoru"
     ],
-    "default_agent": "Yoru"
+    "selected_agent": "Yoru",
+    "img_delay_time": 0.1
 }
