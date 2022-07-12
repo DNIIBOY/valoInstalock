@@ -3,7 +3,7 @@
 <h2 align="center">Valorant Instalocker</h2>
 
 <p align="center">
-<a href="https://github.com/DNIIBOY/valoInstalock/blob/main/LICENSE"><img alt="License: MIT"></a>>
+<a href="https://github.com/DNIIBOY/valoInstalock/blob/main/LICENSE"><img alt="License: MIT"></a>
 </p>
 
 ## Installation and usage
