@@ -60,7 +60,6 @@ class InstaLocker:
         :return: Boolean, returns true if agent select is found, returns false if interrupted
         """
         while self.is_active:
-            print("waiting")
             # Get pixel locations from constants file
             box0 = PIXEL_LOCATIONS["select_screen_0"]
             box1 = PIXEL_LOCATIONS["select_screen_1"]

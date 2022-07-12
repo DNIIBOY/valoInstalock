@@ -157,6 +157,13 @@ class ControlPanel:
         for key in self.settings_buttons:
             self.settings_buttons[key].grid_remove()
 
+        status_label = Label(self.main_window,
+                             text="Waiting for start",
+                             fg="lightgreen",
+                             bg="black",
+                             font="Georgia 15")
+        status_label.pack()
+
         run_button = Button(
             self.main_window,
             text="Run",
@@ -168,6 +175,7 @@ class ControlPanel:
         )
         run_button.pack(side=BOTTOM, pady=25)
         self.UI_elements["run_button"] = run_button
+        self.UI_elements["status_label"] = status_label
 
     def update_settings_file(self) -> None:
         """
@@ -300,6 +308,11 @@ class ControlPanel:
             text="Stop",
             command=lambda: self.stop_instalocker(),
         )
+        status_label = self.UI_elements["status_label"]
+        status_label.configure(
+            text="Waiting for agent select",
+            fg="yellow"
+        )
 
     def stop_instalocker(self) -> None:
         """
@@ -315,6 +328,11 @@ class ControlPanel:
         run_button.configure(
             text="Run",
             command=lambda: self.start_instalocker(),
+        )
+        status_label = self.UI_elements["status_label"]
+        status_label.configure(
+            text="Waiting for start",
+            fg="lightgreen"
         )
 
     def run_instalocker(self, agent_num: int):
