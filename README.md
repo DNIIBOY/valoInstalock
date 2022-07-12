@@ -9,15 +9,34 @@
 <a href="https://github.com/DNIIBOY/valoInstalock/blob/main/LICENSE"><img alt="License: MIT"></a>
 </p>
 
+## Requirements
+```
+* Windows 10/11
+* Resoulution: 1920x1080
+```
+
+
 ## Installation and usage
 
 ### Installation
 
-The _Valorant Instalocker_ can be installed by downloading the _.zip_ archive from the <a href="https://github.com/DNIIBOY/valoInstalock/releases">releases page</a>
+The _Valorant Instalocker_ can be installed by downloading the _.zip_ archive from the <a href="https://github.com/DNIIBOY/valoInstalock/releases">releases page</a>.
+Extract the contents into your preferred install-location. Next, create a desktop shortcut, to place the program on your desktop.
+![image](https://user-images.githubusercontent.com/32793938/178540212-b5494df4-101f-47cc-a251-6834d2e0f8fb.png)
+
 
 
 ### Usage
+To use the _Valorant Instalocker_, open the program and click the settings-cog. By clicking on agents you can toggle which agents are unlocked and which aren't.
+<br>
+![image](https://user-images.githubusercontent.com/32793938/178541096-16c6f3ae-9bdb-4737-9d08-c10ba8fdf896.png) <br>
+After choosing which agents should be unlocked, hit the settings-cog again, to exit the settings menu.
+Now you are ready to pick an agent from the list, and hit run.
+<br>
+![image](https://user-images.githubusercontent.com/32793938/178541992-050637f3-d34d-49ce-88a7-4cbea7f8985d.png) <br>
+The agent hightlighted in black, is the agent that will be chosed by the program, when you enter a game.
 
+## Features
 Program for instalocking valorant agents
 Current features:
 1. Select any valorant agent and have it instalocked on game load
