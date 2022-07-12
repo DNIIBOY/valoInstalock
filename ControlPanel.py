@@ -58,6 +58,7 @@ class ControlPanel:
         self.main_window.minsize(480, 270)
         self.main_window.maxsize(960, 540)
         self.main_window.geometry("960x540")  # Default size
+        self.main_window.iconbitmap("img/logoblack.ico")
 
         # Setup background image
         background_image = PhotoImage(file="img/iceboxBackground.png")
