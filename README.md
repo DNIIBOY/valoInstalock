@@ -24,6 +24,13 @@ The _Valorant Instalocker_ can be installed by downloading the _.zip_ archive fr
 Extract the contents into your preferred install-location. Next, create a desktop shortcut, to place the program on your desktop.
 ![image](https://user-images.githubusercontent.com/32793938/178540212-b5494df4-101f-47cc-a251-6834d2e0f8fb.png)
 
+#### Manual installation
+If you wish to use the uncompiled version simply write these commands in the terminal:
+```sh
+git clone https://github.com/DNIIBOY/valoInstalock/edit/main/README.md
+pip install -r requirements.txt
+python main.py
+```
 
 
 ### Usage
