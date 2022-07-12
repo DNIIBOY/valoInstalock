@@ -11,8 +11,8 @@
 
 ## Requirements
 ```
-* Windows 10/11
-* Resoulution: 1920x1080
+Windows 10/11
+Resoulution: 1920x1080
 ```
 
 
