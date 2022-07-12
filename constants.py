@@ -44,4 +44,15 @@ RGB_VALUES = {
 # Pixel locations of buttons to click
 CLICK_LOCATIONS = {
     "agent_lock_btn": (1000, 820),
+    "ability_1": (665, 885),
+    "ability_2": (888, 885),
+    "ability_3": (1170, 885),
+    "ability_4": (1300, 885),
+    "light_shield": (1440, 285),
+    "heavy_shield": (1440, 585),
+    "classic": (475, 200),
+    "shorty": (475, 325),
+    "frenzy": (475, 450),
+    "ghost": (475, 575),
+    "sheriff": (475, 700),
 }
