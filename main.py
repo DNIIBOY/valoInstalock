@@ -1,3 +1,5 @@
+import _tkinter
+
 from ControlPanel import ControlPanel
 
 if __name__ == '__main__':
@@ -6,6 +8,6 @@ if __name__ == '__main__':
     CP.start()
     try:
         CP.stop_instalocker()
-    except:  # Fix issue with crash while closing
+    except _tkinter.TclError:  # Fix issue with crash while closing
         pass
     CP.update_settings_file()
