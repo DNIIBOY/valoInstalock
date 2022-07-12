@@ -10,7 +10,7 @@
 
 ### Installation
 
-The _Valorant Instalocker_ can be installed by downloading the _.zip_ archive from the <a href="https://github.com/DNIIBOY/valoInstalock/releases"releases page</a>
+The _Valorant Instalocker_ can be installed by downloading the _.zip_ archive from the <a href="https://github.com/DNIIBOY/valoInstalock/releases">releases page</a>
 
 
 ### Usage
