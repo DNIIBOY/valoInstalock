@@ -50,10 +50,12 @@ Current features:
 1. Settings file remembers your agent choice, so you can easily lock the same agent again
 
 ## Future plans
-1. Auto buy first round
+1. Choose rate of image captures
+  - Lets user pick between performance of program, versus strain on system ressources
+2. Autobuy first round
   - Buy pistol and armor automatically, based on your choices
-2. Bomb timer
+3. Bomb timer
   - When spike is planted, show a popup, with the current number of seconds until detonation
-3. Autobuy every round
+4. Autobuy every round
   - Have your preferred weapons bought every time you respawn, in case you are not active at the time
 
