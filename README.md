@@ -49,14 +49,13 @@ Program for instalocking valorant agents
 Current features:
 1. Select any valorant agent and have it instalocked on game load
 1. Settings file remembers your agent choice, so you can easily lock the same agent again
+1. Configurable delay time to allow for choice between speed of the instalocker, and system ressources being utilized
 
 ## Future plans
-1. Choose rate of image captures
-  - Lets user pick between performance of program, versus strain on system ressources
-2. Autobuy first round
+1. Autobuy first round
   - Buy pistol and armor automatically, based on your choices
-3. Bomb timer
+2. Bomb timer
   - When spike is planted, show a popup, with the current number of seconds until detonation
-4. Autobuy every round
+3. Autobuy every round
   - Have your preferred weapons bought every time you respawn, in case you are not active at the time
 
