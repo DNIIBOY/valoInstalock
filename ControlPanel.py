@@ -64,7 +64,7 @@ class ControlPanel:
         background_label.place(x=0, y=0, relwidth=1, relheight=1)
         background_label.image = background_image  # Fixes issue with lost reference for image
 
-        title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Georgia 30", bg="#000000")
+        title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
 
     def setup_agent_grid(self) -> None:
@@ -133,7 +133,7 @@ class ControlPanel:
         self.internal_settings_canvas.pack()
 
         img = PhotoImage(file=f"{CURRENT_DIR}\\img\\redcog.png")
-        cog_img = img.subsample(3, 3)
+        cog_img = img.subsample(3, 3)  # Make the image small enough to fit
 
         settings_cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings())
         settings_cog.image = cog_img
@@ -142,6 +142,9 @@ class ControlPanel:
 
         selected_agents_button = Button(self.internal_settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
         all_agents_button = Button(self.internal_settings_canvas, text="All Agents", command=lambda: self.set_agent_list(1))
+
+        auto_restart_toggle = Button(self.internal_settings_canvas, text="Auto Restart", command=lambda: self.toggle_auto_restart())
+        auto_restart_toggle.configure(bg=("#79c7c0" if self.settings["auto_restart"] else "#ff4b50"))
 
         delay_entry_label = Label(self.internal_settings_canvas, text="Delay:", bg="black", fg="white")
         validation = self.main_window.register(float_validation)  # Only allow float characters
@@ -156,13 +159,17 @@ class ControlPanel:
 
         selected_agents_button.grid(column=0, row=0, padx=10, pady=10)
         all_agents_button.grid(column=1, row=0, padx=10, pady=10)
-        delay_entry_label.grid(column=2, row=0, padx=2, pady=10)
-        img_delay_entry.grid(column=3, row=0, padx=10, pady=10)
+        auto_restart_toggle.grid(column=2, row=0, padx=10, pady=10)
+        delay_entry_label.grid(column=3, row=0, padx=2, pady=10)
+        img_delay_entry.grid(column=4, row=0, padx=10, pady=10)
 
-        self.settings_buttons["selected_agents_button"] = selected_agents_button
-        self.settings_buttons["all_agents_button"] = all_agents_button
-        self.settings_buttons["delay_entry_label"] = delay_entry_label
-        self.settings_buttons["img_delay_entry"] = img_delay_entry
+        self.settings_buttons = {
+            "selected_agents_button": selected_agents_button,
+            "all_agents_button": all_agents_button,
+            "auto_restart_toggle": auto_restart_toggle,
+            "delay_entry_label": delay_entry_label,
+            "img_delay_entry": img_delay_entry,
+        }
 
         # Hide settings by default
         for key in self.settings_buttons:
@@ -172,12 +179,13 @@ class ControlPanel:
                              text="Waiting for start",
                              fg="lightgreen",
                              bg="black",
-                             font="Georgia 15")
+                             font="Rockwell 20")
         status_label.pack()
 
         run_button = Button(
             self.main_window,
             text="Run",
+            font="Rockwell 15",
             command=lambda: self.start_instalocker(),
             height=2,
             width=12,
@@ -308,6 +316,21 @@ class ControlPanel:
             but.destroy()
         self.agent_button_list = []
         self.setup_agent_grid()
+
+    def toggle_auto_restart(self) -> None:
+        """
+        Toggle whether the program auto restarts for the next game
+        """
+        if self.settings["auto_restart"]:
+            self.settings["auto_restart"] = False
+            self.settings_buttons["auto_restart_toggle"].configure(
+                bg="#ff4b50",
+            )
+        else:
+            self.settings["auto_restart"] = True
+            self.settings_buttons["auto_restart_toggle"].configure(
+                bg="#79c7c0",
+            )
 
     def start_instalocker(self) -> None:
         """
