@@ -18,7 +18,7 @@ class ControlPanel:
         self.settings_canvas = Canvas(self.main_window, height=100, width=600)  # Canvas for settings and settings button
         self.internal_settings_canvas = Canvas(self.settings_canvas)  # Canvas that toggles with settings
 
-        self.settings = get_settings("settings.json")
+        self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
         self.show_settings = False  # Whether the settings panel is shown
 
         self.IL = None  # Object of instalocker class, for instalocking
@@ -53,10 +53,10 @@ class ControlPanel:
         self.main_window.minsize(480, 270)
         self.main_window.maxsize(960, 540)
         self.main_window.geometry("960x540")  # Default size
-        self.main_window.iconbitmap("img/logo.ico")
+        self.main_window.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
         # Setup background image
-        background_image = PhotoImage(file="img/iceboxBackground.png")
+        background_image = PhotoImage(file=f"{CURRENT_DIR}\\img\\iceboxBackground.png")
         background_label = self.UI_elements["background_label"]
         background_label.configure(
             image=background_image
@@ -132,7 +132,7 @@ class ControlPanel:
         )
         self.internal_settings_canvas.pack()
 
-        img = PhotoImage(file="img/redcog.png")
+        img = PhotoImage(file=f"{CURRENT_DIR}\\img\\redcog.png")
         cog_img = img.subsample(3, 3)
 
         settings_cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings())
@@ -195,7 +195,7 @@ class ControlPanel:
         self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
 
         json_object = json.dumps(self.settings, indent=4)
-        with open("settings.json", "w") as settings_file:
+        with open(f"{CURRENT_DIR}\\settings.json", "w") as settings_file:
             settings_file.write(json_object)
 
     def update_delay(self, sv: StringVar) -> None:

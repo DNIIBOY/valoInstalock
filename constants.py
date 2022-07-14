@@ -1,3 +1,7 @@
+from os.path import dirname, realpath
+
+CURRENT_DIR = dirname(realpath(__file__))
+
 # All valorant agents
 AGENT_LIST = [
     "Astra",
