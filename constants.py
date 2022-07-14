@@ -1,6 +1,12 @@
 from os.path import dirname, realpath
+import sys
 
-CURRENT_DIR = dirname(realpath(__file__))
+# determine if application is a script file or frozen exe
+if getattr(sys, 'frozen', False):
+    CURRENT_DIR = dirname(sys.executable)
+elif __file__:
+    CURRENT_DIR = dirname(realpath(__file__))
+
 
 # All valorant agents
 AGENT_LIST = [
