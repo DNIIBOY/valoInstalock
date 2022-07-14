@@ -50,7 +50,7 @@ class ControlPanel:
         Set up the main window, including title and size
         """
         self.main_window.title("Valorant Instalocker")
-        self.main_window.minsize(690, 450)
+        self.main_window.minsize(850, 500)
         self.main_window.maxsize(960, 540)
         self.main_window.geometry("960x540")  # Default size
         self.main_window.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
@@ -91,6 +91,7 @@ class ControlPanel:
                             width=8,
                             background="white",
                             foreground="#ff4b50",
+                            font="Rockwell 12",
                             command=lambda num=i: self.select_agent(num),
                         )
                     )
@@ -103,6 +104,7 @@ class ControlPanel:
                             width=8,
                             background="white",
                             foreground="#ff4b50",
+                            font="Rockwell 12",
                             command=lambda num=i: self.unlock_agent(num),
                         )
                     )
@@ -126,8 +128,8 @@ class ControlPanel:
         self.settings_canvas.pack()
 
         self.internal_settings_canvas.configure(
-            height=4,
-            width=200,
+            height=49,
+            width=575,
             bg="black"
         )
         self.internal_settings_canvas.pack()
@@ -146,7 +148,7 @@ class ControlPanel:
         auto_restart_toggle = Button(self.internal_settings_canvas, text="Auto Restart", command=lambda: self.toggle_auto_restart())
         auto_restart_toggle.configure(bg=("#79c7c0" if self.settings["auto_restart"] else "#ff4b50"))
 
-        delay_entry_label = Label(self.internal_settings_canvas, text="Delay:", bg="black", fg="white")
+        delay_entry_label = Label(self.internal_settings_canvas, text="Check Delay [s]:", bg="black", fg="white")
         validation = self.main_window.register(float_validation)  # Only allow float characters
 
         img_delay_entry = Entry(
@@ -171,9 +173,9 @@ class ControlPanel:
             "img_delay_entry": img_delay_entry,
         }
 
-        # Hide settings by default
         for key in self.settings_buttons:
-            self.settings_buttons[key].grid_remove()
+            self.settings_buttons[key].configure(font="Rockwell 12")
+            self.settings_buttons[key].grid_remove()  # Hide all buttons by default
 
         status_label = Label(self.main_window,
                              text="Waiting for start",
