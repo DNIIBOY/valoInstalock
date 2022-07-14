@@ -198,21 +198,6 @@ class ControlPanel:
         with open(f"{CURRENT_DIR}\\settings.json", "w") as settings_file:
             settings_file.write(json_object)
 
-    def update_delay(self, sv: StringVar) -> None:
-        """
-        Update the img_delay_time setting
-        :param sv: StringVar object from entry
-        """
-        val = sv.get()
-        if val == "":
-            val = 0.0
-        elif val.count(".") > 1:
-            val = val.replace(".", "")
-        val = float(val)
-        if val < 0.0:
-            val = 0.0
-        self.settings["img_delay_time"] = val
-
     def select_agent(self, agent_num: int) -> None:
         """
         Selects which agent should be instalocked by the program
@@ -271,8 +256,6 @@ class ControlPanel:
             self.settings["img_delay_time"] = float(self.settings_buttons["img_delay_entry"].get())
         except ValueError:
             self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
-
-        self.settings["play_screen_delay_time"] = float(self.settings.get("play_screen_delay_time", DEFAULT_SETTINGS["play_screen_delay_time"]))
 
         settings_cog = self.UI_elements["settings_cog"]
         if self.show_settings:
@@ -377,7 +360,9 @@ class ControlPanel:
         :param play_screen_delay_time: Float representing the time between grabbing images while in game in seconds
         """
         self.IL = InstaLocker(agent_num, img_delay_time, play_screen_delay_time)
-        while True:
+        self.IL.is_active = True
+
+        while self.IL.is_active:
             status_label = self.UI_elements["status_label"]
             status_label.configure(
                 text="Waiting for agent select",
@@ -386,13 +371,17 @@ class ControlPanel:
 
             self.IL.run()
 
+            if not self.settings["auto_restart"]:
+                self.IL.is_active = False
+
             status_label = self.UI_elements["status_label"]
             status_label.configure(
                 text="Waiting for main menu",
                 fg="yellow"
             )
             if not self.IL.wait_for_play_screen():
-                break
+                self.IL.is_active = False
+
         self.stop_instalocker()
 
 
@@ -406,7 +395,19 @@ def get_settings(path: str):
         with open(path, "w") as settings_file:
             settings_file.write(json.dumps(DEFAULT_SETTINGS, indent=4))
     with open(path, "r") as settings_file:
-        return json.load(settings_file)
+        settings = json.load(settings_file)
+
+    # Remove unused settings
+    for setting in settings.keys():
+        if setting not in DEFAULT_SETTINGS.keys():
+            settings.pop(setting)
+
+    # Add missing settings
+    for setting in DEFAULT_SETTINGS.keys():
+        if setting not in settings:
+            settings[setting] = DEFAULT_SETTINGS[setting]
+
+    return settings
 
 
 def get_locked_agents(unlocked_agents: list) -> list[str]:

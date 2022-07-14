@@ -21,6 +21,7 @@
         "Yoru"
     ],
     "selected_agent": "Yoru",
-    "img_delay_time": 0.1,
-    "play_screen_delay_time": 3.0
+    "img_delay_time": 0.5,
+    "play_screen_delay_time": 3.0,
+    "auto_restart": false
 }
