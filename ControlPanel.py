@@ -50,7 +50,7 @@ class ControlPanel:
         Set up the main window, including title and size
         """
         self.main_window.title("Valorant Instalocker")
-        self.main_window.minsize(480, 270)
+        self.main_window.minsize(690, 450)
         self.main_window.maxsize(960, 540)
         self.main_window.geometry("960x540")  # Default size
         self.main_window.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
