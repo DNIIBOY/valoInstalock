@@ -38,18 +38,23 @@ DEFAULT_SETTINGS = {
     "unlocked_agents": DEFAULT_AGENTS,
     "selected_agent": "Brimstone",
     "img_delay_time": 1.0,
+    "play_screen_delay_time": 3.0
 }
 
 # Pixel locations for detection pictures
 PIXEL_LOCATIONS = {
     "select_screen_0": (841, 784),  # Top left corner of "lock in" button
     "select_screen_1": (950, 866),  # Yellow arrow above agents
+    "play_screen_0": (969, 25),  # Gray background on play button
+    "play_screen_1": (16, 10)  # Top left corner Valorant logo
 }
 
 # RGB values for detection pictures
 RGB_VALUES = {
     "select_screen_0": (255, 255, 255),
     "select_screen_1": (234, 238, 178),
+    "play_screen_0": (194, 196, 201),
+    "play_screen_1": (254, 254, 254)
 }
 
 # Pixel locations of buttons to click

@@ -271,6 +271,9 @@ class ControlPanel:
             self.settings["img_delay_time"] = float(self.settings_buttons["img_delay_entry"].get())
         except ValueError:
             self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
+
+        self.settings["play_screen_delay_time"] = float(self.settings.get("play_screen_delay_time", DEFAULT_SETTINGS["play_screen_delay_time"]))
+
         settings_cog = self.UI_elements["settings_cog"]
         if self.show_settings:
             settings_cog.configure(bg="white")
@@ -332,17 +335,17 @@ class ControlPanel:
         except ValueError:
             self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(agent_num, self.settings["img_delay_time"]))
+        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
+            agent_num,
+            self.settings["img_delay_time"],
+            self.settings["play_screen_delay_time"]
+        )
+                                          )
         self.IL_thread.start()
         run_button = self.UI_elements["run_button"]
         run_button.configure(
             text="Stop",
             command=lambda: self.stop_instalocker(),
-        )
-        status_label = self.UI_elements["status_label"]
-        status_label.configure(
-            text="Waiting for agent select",
-            fg="yellow"
         )
 
     def stop_instalocker(self) -> None:
@@ -366,14 +369,30 @@ class ControlPanel:
             fg="lightgreen"
         )
 
-    def run_instalocker(self, agent_num: int, img_delay_time: float) -> None:
+    def run_instalocker(self, agent_num: int, img_delay_time: float, play_screen_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
         :param img_delay_time: Float representing the time between grabbing images in seconds
+        :param play_screen_delay_time: Float representing the time between grabbing images while in game in seconds
         """
-        self.IL = InstaLocker(agent_num, img_delay_time)
-        self.IL.run()
+        self.IL = InstaLocker(agent_num, img_delay_time, play_screen_delay_time)
+        while True:
+            status_label = self.UI_elements["status_label"]
+            status_label.configure(
+                text="Waiting for agent select",
+                fg="yellow"
+            )
+
+            self.IL.run()
+
+            status_label = self.UI_elements["status_label"]
+            status_label.configure(
+                text="Waiting for main menu",
+                fg="yellow"
+            )
+            if not self.IL.wait_for_play_screen():
+                break
         self.stop_instalocker()
 
 
