@@ -422,17 +422,18 @@ def get_settings(path: str):
     with open(path, "r") as settings_file:
         settings = json.load(settings_file)
 
+    new_settings = {}
     # Remove unused settings
     for setting in settings.keys():
-        if setting not in DEFAULT_SETTINGS.keys():
-            settings.pop(setting)
+        if setting in DEFAULT_SETTINGS.keys():
+            new_settings[setting] = settings[setting]
 
     # Add missing settings
     for setting in DEFAULT_SETTINGS.keys():
         if setting not in settings:
-            settings[setting] = DEFAULT_SETTINGS[setting]
+            new_settings[setting] = DEFAULT_SETTINGS[setting]
 
-    return settings
+    return new_settings
 
 
 def get_locked_agents(unlocked_agents: list) -> list[str]:
