@@ -7,19 +7,21 @@ from constants import *
 from InstaLocker import InstaLocker
 
 
-class ControlPanel:
+class ControlPanel(Tk):
     def __init__(self):
-        self.main_window = Tk()  # Root window
+        super().__init__()
+
+        self.buy_menu = Frame(self)  # Frame for first round buy menu
 
         # Setup label for background image
-        background_label = Label(self.main_window)
+        background_label = Label(self)
 
-        self.agent_canvas = Canvas(self.main_window, height=200, width=600)  # Grid of agents
-        self.settings_canvas = Canvas(self.main_window, height=100, width=600)  # Canvas for settings and settings button
-        self.internal_settings_canvas = Canvas(self.settings_canvas)  # Canvas that toggles with settings
+        self.agent_canvas = Canvas(self, height=200, width=600)  # Grid of agents
+        self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
         self.show_settings = False  # Whether the settings panel is shown
+        self.show_buy_menu = False  # Whether the first round buy menu is shown
 
         self.IL = None  # Object of instalocker class, for instalocking
         self.IL_thread = None  # Thread for running actual instalocker
@@ -43,17 +45,17 @@ class ControlPanel:
 
         self.setup_settings_panel()
 
-        self.main_window.mainloop()
+        self.mainloop()
 
     def setup_main_window(self) -> None:
         """
         Set up the main window, including title and size
         """
-        self.main_window.title("Valorant Instalocker")
-        self.main_window.minsize(850, 500)
-        self.main_window.maxsize(960, 540)
-        self.main_window.geometry("960x540")  # Default size
-        self.main_window.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
+        self.title("Valorant Instalocker")
+        self.minsize(850, 500)
+        self.maxsize(960, 540)
+        self.geometry("960x540")  # Default size
+        self.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
         # Setup background image
         background_image = PhotoImage(file=f"{CURRENT_DIR}\\img\\iceboxBackground.png")
@@ -64,7 +66,7 @@ class ControlPanel:
         background_label.place(x=0, y=0, relwidth=1, relheight=1)
         background_label.image = background_image  # Fixes issue with lost reference for image
 
-        title = Label(self.main_window, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
+        title = Label(self, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
 
     def setup_agent_grid(self) -> None:
@@ -125,34 +127,32 @@ class ControlPanel:
         """
         Set up the settings panel
         """
-        self.settings_canvas.pack()
-
-        self.internal_settings_canvas.configure(
+        self.settings_canvas.configure(
             height=49,
             width=575,
             bg="black"
         )
-        self.internal_settings_canvas.pack()
+        self.settings_canvas.pack()
 
         img = PhotoImage(file=f"{CURRENT_DIR}\\img\\redcog.png")
         cog_img = img.subsample(3, 3)  # Make the image small enough to fit
 
-        settings_cog = Button(self.main_window, image=cog_img, command=lambda: self.toggle_settings())
+        settings_cog = Button(self, image=cog_img, command=lambda: self.toggle_settings())
         settings_cog.image = cog_img
         settings_cog.pack(pady=10)
         self.UI_elements["settings_cog"] = settings_cog
 
-        selected_agents_button = Button(self.internal_settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
-        all_agents_button = Button(self.internal_settings_canvas, text="All Agents", command=lambda: self.set_agent_list(1))
+        selected_agents_button = Button(self.settings_canvas, text="Default Agents", command=lambda: self.set_agent_list(0))
+        all_agents_button = Button(self.settings_canvas, text="All Agents", command=lambda: self.set_agent_list(1))
 
-        auto_restart_toggle = Button(self.internal_settings_canvas, text="Auto Restart", command=lambda: self.toggle_auto_restart())
+        auto_restart_toggle = Button(self.settings_canvas, text="Auto Restart", command=lambda: self.toggle_auto_restart())
         auto_restart_toggle.configure(bg=("#79c7c0" if self.settings["auto_restart"] else "#ff4b50"))
 
-        delay_entry_label = Label(self.internal_settings_canvas, text="Check Delay [s]:", bg="black", fg="white")
-        validation = self.main_window.register(float_validation)  # Only allow float characters
+        delay_entry_label = Label(self.settings_canvas, text="Check Delay [s]:", bg="black", fg="white")
+        validation = self.register(float_validation)  # Only allow float characters
 
         img_delay_entry = Entry(
-            self.internal_settings_canvas,
+            self.settings_canvas,
             validate="key",
             validatecommand=(validation, "%S"),
             width=5,
@@ -177,7 +177,7 @@ class ControlPanel:
             self.settings_buttons[key].configure(font="Rockwell 12")
             self.settings_buttons[key].grid_remove()  # Hide all buttons by default
 
-        status_label = Label(self.main_window,
+        status_label = Label(self,
                              text="Waiting for start",
                              fg="lightgreen",
                              bg="black",
@@ -185,7 +185,7 @@ class ControlPanel:
         status_label.pack()
 
         run_button = Button(
-            self.main_window,
+            self,
             text="Run",
             font="Rockwell 15",
             command=lambda: self.start_instalocker(),
@@ -197,6 +197,16 @@ class ControlPanel:
         run_button.pack(side=BOTTOM, pady=25)
         self.UI_elements["run_button"] = run_button
         self.UI_elements["status_label"] = status_label
+
+    def setup_buy_menu(self) -> None:
+        self.buy_menu.configure(
+            bg="black",
+            height=500,
+            width=500,
+
+        )
+        Button(self.buy_menu, text="Buy").pack()
+        self.buy_menu.grid(row=0, column=0, sticky="nsew")
 
     def update_settings_file(self) -> None:
         """
@@ -273,12 +283,19 @@ class ControlPanel:
             self.show_settings = False
             for key in self.settings_buttons:
                 self.settings_buttons[key].grid_remove()
+            self.buy_menu.tkraise(self.settings_canvas)
         else:
             settings_cog.configure(bg="black")
             self.show_settings = True
             for key in self.settings_buttons:
                 self.settings_buttons[key].grid()
         self.change_agents(self.show_settings)
+
+    def toggle_buy_menu(self) -> None:
+        """
+        Toggle the menu for selecting first round buy
+        """
+        pass
 
     def change_agents(self, enable_change: bool) -> None:
         """
