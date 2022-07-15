@@ -1,10 +1,11 @@
 import json
 import threading
-import os
 
 from tkinter import *
 from constants import *
+from helpers import get_settings, get_button_texts, float_validation
 from InstaLocker import InstaLocker
+from AgentGrid import AgentGrid
 
 
 class ControlPanel(Tk):
@@ -16,7 +17,7 @@ class ControlPanel(Tk):
         # Setup label for background image
         background_label = Label(self)
 
-        self.agent_canvas = Canvas(self, height=200, width=600)  # Grid of agents
+        # self.agent_grid = Canvas(self, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
@@ -26,7 +27,7 @@ class ControlPanel(Tk):
         self.IL = None  # Object of instalocker class, for instalocking
         self.IL_thread = None  # Thread for running actual instalocker
 
-        self.agent_button_list = []  # Contains button objects for all agents
+        # self.agent_button_list = []
 
         # All miscellaneous buttons and labels
         self.UI_elements = {
@@ -73,55 +74,9 @@ class ControlPanel(Tk):
         """
         Set up the agent grid
         """
-        self.agent_canvas.configure(
-            bg="white"
-        )
+        self.agent_grid = AgentGrid(self)
 
-        locked_agents = get_locked_agents(self.settings["unlocked_agents"])
-
-        i = 0
-        for y in range(2):
-            # Account for extra agent on top row, when there is and odd agent count
-            odd_offset = int(len(AGENT_LIST) % 2 == 1 and y == 0)
-            for x in range((len(AGENT_LIST) // 2) + odd_offset):
-                if i < len(self.settings["unlocked_agents"]):  # All unlocked agents first
-                    self.agent_button_list.append(
-                        Button(
-                            self.agent_canvas,
-                            text=self.settings["unlocked_agents"][i],
-                            height=3,
-                            width=8,
-                            background="white",
-                            foreground="#ff4b50",
-                            font="Rockwell 12",
-                            command=lambda num=i: self.select_agent(num),
-                        )
-                    )
-                else:  # Locked agents last
-                    self.agent_button_list.append(
-                        Button(
-                            self.agent_canvas,
-                            text=locked_agents[i - len(self.settings["unlocked_agents"])],
-                            height=3,
-                            width=8,
-                            background="white",
-                            foreground="#ff4b50",
-                            font="Rockwell 12",
-                            command=lambda num=i: self.unlock_agent(num),
-                        )
-                    )
-                    self.agent_button_list[i]["state"] = "disabled"
-
-                self.agent_button_list[i].grid(column=x, row=y, padx=1, pady=1)
-                i += 1
-
-        self.agent_canvas.pack(pady=25)
-
-        # Select default agent
-        try:
-            self.agent_button_list[self.settings["unlocked_agents"].index(self.settings["selected_agent"])].configure(bg="black")
-        except ValueError:
-            self.agent_button_list[0].configure(bg="black")
+        self.agent_grid.pack(pady=10)
 
     def setup_settings_panel(self) -> None:
         """
@@ -283,7 +238,7 @@ class ControlPanel(Tk):
             self.show_settings = False
             for key in self.settings_buttons:
                 self.settings_buttons[key].grid_remove()
-            self.buy_menu.tkraise(self.settings_canvas)
+            # self.buy_menu.tkraise()
         else:
             settings_cog.configure(bg="black")
             self.show_settings = True
@@ -302,22 +257,22 @@ class ControlPanel(Tk):
         Toggle whether the user can change which agents are unlocked.
         :param enable_change: True if the user can change which agents are unlocked, False otherwise.
         """
+        agent_buttons = self.agent_grid.agent_buttons
+        print(agent_buttons)
         if enable_change:
             for i in range(len(self.settings["unlocked_agents"])):
-                self.agent_button_list[i].configure(
+                agent_buttons[i].configure(
                     background="lightgray",
                     command=lambda num=i: self.lock_agent(num),
                 )
             for i in range(len(self.settings["unlocked_agents"]), len(AGENT_LIST)):
-                self.agent_button_list[i]["state"] = "normal"
-                self.agent_button_list[i].configure(
+                agent_buttons[i]["state"] = "normal"
+                agent_buttons[i].configure(
                     background="gray",
                 )
         else:
-            for but in self.agent_button_list:
-                but.destroy()
-            self.agent_button_list = []
-            self.setup_agent_grid()
+            self.agent_grid.destroy_buttons()
+            self.agent_grid.setup()
 
     def set_agent_list(self, list_mode: int) -> None:
         """
@@ -425,67 +380,3 @@ class ControlPanel(Tk):
                 self.IL.is_active = False
 
         self.stop_instalocker()
-
-
-def get_settings(path: str):
-    """
-    Get the settings from the settings file, or create a new settings file if it doesn't exist.
-    :param path: Path to the settings file
-    :return: Dictionary containing the settings
-    """
-    if not os.path.exists(path):
-        with open(path, "w") as settings_file:
-            settings_file.write(json.dumps(DEFAULT_SETTINGS, indent=4))
-    with open(path, "r") as settings_file:
-        settings = json.load(settings_file)
-
-    new_settings = {}
-    # Remove unused settings
-    for setting in settings.keys():
-        if setting in DEFAULT_SETTINGS.keys():
-            new_settings[setting] = settings[setting]
-
-    # Add missing settings
-    for setting in DEFAULT_SETTINGS.keys():
-        if setting not in settings:
-            new_settings[setting] = DEFAULT_SETTINGS[setting]
-
-    return new_settings
-
-
-def get_locked_agents(unlocked_agents: list) -> list[str]:
-    """
-    Get a list of all locked agents based on the unlocked_agents list and the global AGENT_LIST
-    :param unlocked_agents: List of unlocked agents
-    """
-    locked_agents = []
-    for agent in AGENT_LIST:
-        if agent not in unlocked_agents:
-            locked_agents.append(agent)
-    return locked_agents
-
-
-def get_button_texts(button_list: list) -> list[str]:
-    """
-    Get the text of all buttons from a list of buttons
-    :param button_list: List of buttons with text
-    """
-    texts = []
-    for but in button_list:
-        texts.append(but.cget("text"))
-    return texts
-
-
-def float_validation(text: str) -> bool:
-    """
-    Validate that a char is a valid float character
-    :param text: String to validate
-    :return: True if the string is a valid float, False otherwise
-    """
-    if text == ".":
-        return True
-    try:
-        float(text)
-        return True
-    except ValueError:
-        return False
