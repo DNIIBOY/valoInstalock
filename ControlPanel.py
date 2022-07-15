@@ -75,6 +75,7 @@ class ControlPanel(Tk):
         Set up the agent grid
         """
         self.agent_grid = AgentGrid(self)
+        self.agent_grid.setup()
 
         self.agent_grid.pack(pady=10)
 

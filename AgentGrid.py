@@ -27,7 +27,7 @@ class AgentGrid(Canvas):
                 if i < len(self.parent.settings["unlocked_agents"]):  # All unlocked agents first
                     self.agent_buttons.append(
                         Button(
-                            self.parent.agent_canvas,
+                            self,
                             text=self.parent.settings["unlocked_agents"][i],
                             height=3,
                             width=8,
@@ -40,7 +40,7 @@ class AgentGrid(Canvas):
                 else:  # Locked agents last
                     self.agent_buttons.append(
                         Button(
-                            self.parent.agent_canvas,
+                            self,
                             text=locked_agents[i - len(self.parent.settings["unlocked_agents"])],
                             height=3,
                             width=8,
