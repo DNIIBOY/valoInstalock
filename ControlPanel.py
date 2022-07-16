@@ -42,7 +42,7 @@ class ControlPanel(Tk):
         Start the program
         """
         self.setup_main_window()
-        self.setup_agent_grid()
+        self.agent_grid.setup()
 
         self.setup_settings_panel()
 
@@ -69,14 +69,6 @@ class ControlPanel(Tk):
 
         title = Label(self, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
-
-    def setup_agent_grid(self) -> None:
-        """
-        Set up the agent grid
-        """
-        self.agent_grid.setup()
-
-        self.agent_grid.pack(pady=10)
 
     def setup_settings_panel(self) -> None:
         """

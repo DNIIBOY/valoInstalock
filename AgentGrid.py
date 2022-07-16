@@ -61,6 +61,8 @@ class AgentGrid(Canvas):
         except ValueError:
             self.buttons[0].configure(bg="black")
 
+        self.pack(pady=10)
+
     def destroy_buttons(self) -> None:
         for button in self.buttons:
             button.destroy()
