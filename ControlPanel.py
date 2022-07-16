@@ -27,7 +27,7 @@ class ControlPanel(Tk):
         self.IL = None  # Object of instalocker class, for instalocking
         self.IL_thread = None  # Thread for running actual instalocker
 
-        # self.agent_button_list = []
+        self.agent_grid = AgentGrid(self)
 
         # All miscellaneous buttons and labels
         self.UI_elements = {
@@ -74,7 +74,6 @@ class ControlPanel(Tk):
         """
         Set up the agent grid
         """
-        self.agent_grid = AgentGrid(self)
         self.agent_grid.setup()
 
         self.agent_grid.pack(pady=10)
@@ -187,11 +186,11 @@ class ControlPanel(Tk):
         except AttributeError:
             pass
 
-        for but in self.agent_button_list[:len(self.settings["unlocked_agents"])]:
+        for but in self.agent_grid.buttons[:len(self.settings["unlocked_agents"])]:
             but.configure(
                 bg="white"
             )
-        self.agent_button_list[agent_num].configure(
+        self.agent_grid.buttons[agent_num].configure(
             bg="black"
         )
 
@@ -200,11 +199,11 @@ class ControlPanel(Tk):
         Unlocks an agent to be selected by the user.
         :param agent_num: Integer representing the index of the agent in the agent_buttons list
         """
-        button_texts = get_button_texts(self.agent_button_list)
+        button_texts = get_button_texts(self.agent_grid.buttons)
 
         self.settings["unlocked_agents"].append(button_texts[agent_num])
         self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
-        self.agent_button_list[agent_num].configure(
+        self.agent_grid.buttons[agent_num].configure(
             bg="lightgray",
             command=lambda num=agent_num: self.lock_agent(num)
         )
@@ -214,12 +213,12 @@ class ControlPanel(Tk):
         Locks an agent from being selected by the user.
         :param agent_num: Integer representing the index of the agent in the agent_buttons list
         """
-        agent_name = self.agent_button_list[agent_num].cget("text")
+        agent_name = self.agent_grid.buttons[agent_num].cget("text")
         if agent_name in DEFAULT_AGENTS:
             return
         self.settings["unlocked_agents"].remove(agent_name)
 
-        self.agent_button_list[agent_num].configure(
+        self.agent_grid.buttons[agent_num].configure(
             bg="gray",
             command=lambda num=agent_num: self.unlock_agent(num)
         )
@@ -258,8 +257,7 @@ class ControlPanel(Tk):
         Toggle whether the user can change which agents are unlocked.
         :param enable_change: True if the user can change which agents are unlocked, False otherwise.
         """
-        agent_buttons = self.agent_grid.agent_buttons
-        print(agent_buttons)
+        agent_buttons = self.agent_grid.buttons
         if enable_change:
             for i in range(len(self.settings["unlocked_agents"])):
                 agent_buttons[i].configure(
@@ -287,10 +285,8 @@ class ControlPanel(Tk):
                 self.settings["unlocked_agents"] = list(AGENT_LIST)  # Convert to list, to prevent using same reference
 
         self.toggle_settings()
-        for but in self.agent_button_list:
-            but.destroy()
-        self.agent_button_list = []
-        self.setup_agent_grid()
+        self.agent_grid.destroy_buttons()
+        self.agent_grid.setup()
 
     def toggle_auto_restart(self) -> None:
         """

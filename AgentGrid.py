@@ -8,7 +8,7 @@ class AgentGrid(Canvas):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.agent_buttons = []  # Contains button objects for all agents
+        self.buttons = []  # Contains button objects for all agents
 
     def setup(self):
         self.configure(
@@ -25,7 +25,7 @@ class AgentGrid(Canvas):
             odd_offset = int(len(AGENT_LIST) % 2 == 1 and y == 0)
             for x in range((len(AGENT_LIST) // 2) + odd_offset):
                 if i < len(self.parent.settings["unlocked_agents"]):  # All unlocked agents first
-                    self.agent_buttons.append(
+                    self.buttons.append(
                         Button(
                             self,
                             text=self.parent.settings["unlocked_agents"][i],
@@ -38,7 +38,7 @@ class AgentGrid(Canvas):
                         )
                     )
                 else:  # Locked agents last
-                    self.agent_buttons.append(
+                    self.buttons.append(
                         Button(
                             self,
                             text=locked_agents[i - len(self.parent.settings["unlocked_agents"])],
@@ -50,18 +50,18 @@ class AgentGrid(Canvas):
                             command=lambda num=i: self.parent.unlock_agent(num),
                         )
                     )
-                    self.agent_buttons[i]["state"] = "disabled"
+                    self.buttons[i]["state"] = "disabled"
 
-                self.agent_buttons[i].grid(column=x, row=y, padx=1, pady=1)
+                self.buttons[i].grid(column=x, row=y, padx=1, pady=1)
                 i += 1
 
         # Select default agent
         try:
-            self.agent_buttons[self.parent.settings["unlocked_agents"].index(self.parent.settings["selected_agent"])].configure(bg="black")
+            self.buttons[self.parent.settings["unlocked_agents"].index(self.parent.settings["selected_agent"])].configure(bg="black")
         except ValueError:
-            self.agent_buttons[0].configure(bg="black")
+            self.buttons[0].configure(bg="black")
 
     def destroy_buttons(self) -> None:
-        for button in self.agent_buttons:
+        for button in self.buttons:
             button.destroy()
-        self.agent_buttons = []
+        self.buttons = []
