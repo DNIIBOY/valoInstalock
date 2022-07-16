@@ -74,3 +74,6 @@ Current features:
 
 - Have your preferred weapons bought every time you respawn, in case you are not active at the time
 
+4. Backup plan if agent was selected by inhuman man
+
+- Either dodge or choose a backup agent
