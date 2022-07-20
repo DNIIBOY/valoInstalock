@@ -12,7 +12,7 @@ class SettingsPanel(Canvas):
 
         self.settings_cog = Button(self.parent)
 
-    def setup(self):
+    def setup(self) -> None:
         self.configure(
             height=49,
             width=575,
@@ -36,15 +36,16 @@ class SettingsPanel(Canvas):
         auto_restart_toggle.configure(bg=("#79c7c0" if self.parent.settings["auto_restart"] else "#ff4b50"))
 
         delay_entry_label = Label(self, text="Check Delay [s]:", bg="black", fg="white")
-        validation = self.register(float_validation)  # Only allow float characters
 
+        validation = self.register(float_validation)  # Only allow float characters
         img_delay_entry = Entry(
             self,
             validate="key",
-            validatecommand=(validation, "%S"),
+            validatecommand=(validation, "%P"),
             width=5,
         )
-        img_delay_entry.insert(0, str(self.parent.settings["img_delay_time"]))
+        img_delay_entry.insert(0, str(self.parent.settings["img_delay"]))
+        img_delay_entry.bind("<KeyRelease>", lambda _: self.parent.update_img_delay(img_delay_entry.get()))
 
         selected_agents_button.grid(column=0, row=0, padx=10, pady=10)
         all_agents_button.grid(column=1, row=0, padx=10, pady=10)
@@ -64,15 +65,10 @@ class SettingsPanel(Canvas):
             self.buttons[key].configure(font="Rockwell 12")
             self.buttons[key].grid_remove()  # Hide all buttons by default
 
-    def toggle_settings(self):
+    def toggle_settings(self) -> None:
         """
         Toggle settings panel on/off
         """
-        try:
-            self.parent.settings["img_delay_time"] = float(self.buttons["img_delay_entry"].get())
-        except ValueError:
-            self.parent.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
-
         if self.show_settings:
             self.show_settings = False
             self.settings_cog.configure(bg="white")

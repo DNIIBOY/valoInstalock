@@ -1,16 +1,15 @@
+from tkinter import *
 import json
 import threading
-
-from tkinter import *
 
 from constants import *
 from helpers import get_settings, get_button_texts
 
-from InstaLocker import InstaLocker
-
 from AgentGrid import AgentGrid
 from SettingsPanel import SettingsPanel
 from StatusField import StatusField
+
+from InstaLocker import InstaLocker
 
 
 class ControlPanel(Tk):
@@ -93,11 +92,20 @@ class ControlPanel(Tk):
         """
         Update settings file with current settings
         """
-        self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
-
         json_object = json.dumps(self.settings, indent=4)
         with open(f"{CURRENT_DIR}\\settings.json", "w") as settings_file:
             settings_file.write(json_object)
+
+    def update_img_delay(self, new_delay: str):
+        """
+        Update the img_delay setting
+        :param new_delay: New delay value to read the value from
+        """
+
+        if new_delay:
+            self.settings["img_delay"] = float(new_delay)
+        else:
+            self.settings["img_delay"] = DEFAULT_SETTINGS["img_delay"]
 
     def select_agent(self, agent_num: int) -> None:
         """
@@ -195,15 +203,10 @@ class ControlPanel(Tk):
         """
         Run the instalocker program
         """
-        try:
-            self.settings["img_delay_time"] = float(self.settings_panel.buttons["img_delay_entry"].get())
-        except ValueError:
-            self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
-
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
         self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
             agent_num,
-            self.settings["img_delay_time"],
+            self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
         )
                                           )
@@ -232,14 +235,14 @@ class ControlPanel(Tk):
             fg="lightgreen"
         )
 
-    def run_instalocker(self, agent_num: int, img_delay_time: float, play_screen_delay_time: float) -> None:
+    def run_instalocker(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
-        :param img_delay_time: Float representing the time between grabbing images in seconds
+        :param img_delay: Float representing the time between grabbing images in seconds
         :param play_screen_delay_time: Float representing the time between grabbing images while in game in seconds
         """
-        self.IL = InstaLocker(agent_num, img_delay_time, play_screen_delay_time)
+        self.IL = InstaLocker(agent_num, img_delay, play_screen_delay_time)
         self.IL.is_active = True
 
         while self.IL.is_active:

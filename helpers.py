@@ -3,7 +3,7 @@ import json
 from constants import *
 
 
-def get_settings(path: str):
+def get_settings(path: str) -> dict:
     """
     Get the settings from the settings file, or create a new settings file if it doesn't exist.
     :param path: Path to the settings file
@@ -58,7 +58,10 @@ def float_validation(text: str) -> bool:
     :param text: String to validate
     :return: True if the string is a valid float, False otherwise
     """
-    if text == ".":
+    if " " in text:
+        return False
+
+    if text == "":
         return True
     try:
         float(text)

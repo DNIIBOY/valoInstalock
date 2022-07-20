@@ -37,7 +37,7 @@ DEFAULT_AGENTS = ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"]
 DEFAULT_SETTINGS = {
     "unlocked_agents": DEFAULT_AGENTS,
     "selected_agent": "Brimstone",
-    "img_delay_time": 0.5,
+    "img_delay": 0.5,
     "play_screen_delay_time": 3.0,
     "auto_restart": False
 }
