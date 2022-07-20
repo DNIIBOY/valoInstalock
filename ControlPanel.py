@@ -45,10 +45,14 @@ class ControlPanel(Tk):
         """
         Start the program
         """
+        print("Setting up main window...")
         self.setup_main_window()
 
+        print("Setting up agent grid...")
         self.agent_grid.setup()
+        print("Setting up settings panel...")
         self.settings_panel.setup()
+        print("Setting up status field...")
         self.StatusField.setup()
 
         self.mainloop()
