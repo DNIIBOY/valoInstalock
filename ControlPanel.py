@@ -188,7 +188,7 @@ class ControlPanel(Tk):
         Run the instalocker program
         """
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.IL.run, args=(
+        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
             agent_num,
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
@@ -234,14 +234,24 @@ class ControlPanel(Tk):
                 text="Waiting for agent select",
                 fg="yellow"
             )
+
             self.IL.run()
-            if not self.settings["auto_restart"]:
+
+            if not self.settings["auto_restart"] or not self.IL.is_active:
+                # If not set to auto restart, or if the instalocker has been stopped, break
                 self.IL.is_active = False
+                break
+
             self.StatusField.status_label.configure(
                 text="Waiting for main menu",
                 fg="yellow"
             )
+
             if not self.IL.wait_for_play_screen():
                 self.IL.is_active = False
 
-        self.stop_instalocker()
+        try:
+            self.stop_instalocker()
+        except RuntimeError:
+            # If the main window has been closed, do nothing.
+            pass

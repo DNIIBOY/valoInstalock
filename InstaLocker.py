@@ -54,8 +54,6 @@ class InstaLocker:
         elif (len(AGENT_LIST) // 2 + 1) < self.agent_num < len(AGENT_LIST):
             self.agent_x = self.agent_x + agent_offset * (self.agent_num - 10)
             self.agent_y = 1010
-        print(self.agent_num)
-        print(self.agent_x, self.agent_y)
 
     def wait_for_agent_select(self) -> bool:
         """
