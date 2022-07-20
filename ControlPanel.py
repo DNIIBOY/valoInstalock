@@ -19,7 +19,7 @@ class ControlPanel(Tk):
         self.buy_menu = Frame(self)  # Frame for first round buy menu
 
         # Setup label for background image
-        background_label = Label(self)
+        self.background_label = Label(self)
 
         # self.agent_grid = Canvas(self, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
@@ -34,11 +34,6 @@ class ControlPanel(Tk):
 
         self.agent_grid = AgentGrid(self)
         self.settings_panel = SettingsPanel(self)
-
-        # All miscellaneous buttons and labels
-        self.UI_elements = {
-            "background_label": background_label,
-        }
 
     def start(self):
         """
@@ -67,12 +62,11 @@ class ControlPanel(Tk):
 
         # Setup background image
         background_image = PhotoImage(file=f"{CURRENT_DIR}\\img\\iceboxBackground.png")
-        background_label = self.UI_elements["background_label"]
-        background_label.configure(
+        self.background_label.configure(
             image=background_image
         )
-        background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        background_label.image = background_image  # Fixes issue with lost reference for image
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.background_label.image = background_image  # Fixes issue with lost reference for image
 
         title = Label(self, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
