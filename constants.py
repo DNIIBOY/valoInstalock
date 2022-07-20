@@ -7,7 +7,6 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     CURRENT_DIR = dirname(realpath(__file__))
 
-
 # All valorant agents
 AGENT_LIST = [
     "Astra",
@@ -73,3 +72,12 @@ CLICK_LOCATIONS = {
     "ghost": (475, 575),
     "sheriff": (475, 700),
 }
+
+# Available guns in the shop
+AVAILABLE_GUNS = [
+    "Classic",
+    "Shorty",
+    "Frenzy",
+    "Ghost",
+    "Sheriff"
+]

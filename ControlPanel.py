@@ -6,6 +6,7 @@ from constants import *
 from helpers import get_settings, get_button_texts
 
 from AgentGrid import AgentGrid
+from BuyMenu import BuyMenu
 from SettingsPanel import SettingsPanel
 from StatusField import StatusField
 
@@ -34,6 +35,7 @@ class ControlPanel(Tk):
 
         self.agent_grid = AgentGrid(self)
         self.settings_panel = SettingsPanel(self)
+        self.buy_menu = BuyMenu(self)
 
     def start(self):
         """
@@ -47,6 +49,8 @@ class ControlPanel(Tk):
         self.settings_panel.setup()
         print("Setting up status field...")
         self.StatusField.setup()
+        print("Setting up buy menu...")
+        self.buy_menu.setup()
 
         self.mainloop()
 
@@ -55,8 +59,8 @@ class ControlPanel(Tk):
         Set up the main window, including title and size
         """
         self.title("Valorant Instalocker")
-        self.minsize(850, 500)
-        self.maxsize(960, 540)
+        self.minsize(850, 514)
+        # self.maxsize(976, 549)  # Rez of background img
         self.geometry("960x540")  # Default size
         self.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
