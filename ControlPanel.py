@@ -4,10 +4,13 @@ import threading
 from tkinter import *
 
 from constants import *
-from helpers import get_settings, get_button_texts, float_validation
+from helpers import get_settings, get_button_texts
+
 from InstaLocker import InstaLocker
+
 from AgentGrid import AgentGrid
 from SettingsPanel import SettingsPanel
+from StatusField import StatusField
 
 
 class ControlPanel(Tk):
@@ -21,6 +24,7 @@ class ControlPanel(Tk):
 
         # self.agent_grid = Canvas(self, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
+        self.StatusField = StatusField(self)  # Status field with run button and status label
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
         self.show_settings = False  # Whether the settings panel is shown
@@ -42,9 +46,10 @@ class ControlPanel(Tk):
         Start the program
         """
         self.setup_main_window()
-        self.agent_grid.setup()
 
-        self.setup_settings_panel()
+        self.agent_grid.setup()
+        self.settings_panel.setup()
+        self.StatusField.setup()
 
         self.mainloop()
 
@@ -69,32 +74,6 @@ class ControlPanel(Tk):
 
         title = Label(self, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
-
-    def setup_settings_panel(self) -> None:
-        self.settings_panel.setup()
-
-        status_label = Label(
-            self,
-            text="Waiting for start",
-            fg="lightgreen",
-            bg="black",
-            font="Rockwell 20"
-        )
-        status_label.pack()
-
-        run_button = Button(
-            self,
-            text="Run",
-            font="Rockwell 15",
-            command=lambda: self.start_instalocker(),
-            height=2,
-            width=12,
-            bg="#79c7c0",
-            fg="#000000",
-        )
-        run_button.pack(side=BOTTOM, pady=25)
-        self.UI_elements["run_button"] = run_button
-        self.UI_elements["status_label"] = status_label
 
     def setup_buy_menu(self) -> None:
         self.buy_menu.configure(
@@ -216,6 +195,7 @@ class ControlPanel(Tk):
             self.settings["img_delay_time"] = float(self.settings_panel.buttons["img_delay_entry"].get())
         except ValueError:
             self.settings["img_delay_time"] = DEFAULT_SETTINGS["img_delay_time"]
+
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
         self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
             agent_num,
@@ -224,8 +204,7 @@ class ControlPanel(Tk):
         )
                                           )
         self.IL_thread.start()
-        run_button = self.UI_elements["run_button"]
-        run_button.configure(
+        self.StatusField.run_button.configure(
             text="Stop",
             command=lambda: self.stop_instalocker(),
         )
@@ -240,13 +219,11 @@ class ControlPanel(Tk):
             # If the instalocker thread has not been started yet, do nothing.
             pass
 
-        run_button = self.UI_elements["run_button"]
-        run_button.configure(
+        self.StatusField.run_button.configure(
             text="Run",
             command=lambda: self.start_instalocker(),
         )
-        status_label = self.UI_elements["status_label"]
-        status_label.configure(
+        self.StatusField.status_label.configure(
             text="Waiting for start",
             fg="lightgreen"
         )
@@ -262,7 +239,7 @@ class ControlPanel(Tk):
         self.IL.is_active = True
 
         while self.IL.is_active:
-            status_label = self.UI_elements["status_label"]
+            status_label = self.StatusField.status_label
             status_label.configure(
                 text="Waiting for agent select",
                 fg="yellow"
@@ -273,7 +250,6 @@ class ControlPanel(Tk):
             if not self.settings["auto_restart"]:
                 self.IL.is_active = False
 
-            status_label = self.UI_elements["status_label"]
             status_label.configure(
                 text="Waiting for main menu",
                 fg="yellow"
