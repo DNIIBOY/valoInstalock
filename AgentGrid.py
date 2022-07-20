@@ -10,7 +10,7 @@ class AgentGrid(Canvas):
         self.parent = parent
         self.buttons = []  # Contains button objects for all agents
 
-    def setup(self):
+    def setup(self) -> None:
         self.configure(
             height=200,
             width=600,
@@ -59,11 +59,17 @@ class AgentGrid(Canvas):
         try:
             self.buttons[self.parent.settings["unlocked_agents"].index(self.parent.settings["selected_agent"])].configure(bg="black")
         except ValueError:
+            # If the selected agent is not in the unlocked agents list, select the first unlocked agent
             self.buttons[0].configure(bg="black")
+            self.parent.settings["selected_agent"] = self.parent.settings["unlocked_agents"][0]
 
         self.pack(pady=10)
 
     def destroy_buttons(self) -> None:
+        """
+        Destroy all buttons in the agent grid and reset the buttons list.
+        :return:
+        """
         for button in self.buttons:
             button.destroy()
         self.buttons = []

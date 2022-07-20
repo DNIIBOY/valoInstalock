@@ -46,7 +46,6 @@ class ControlPanel(Tk):
         """
         print("Setting up main window...")
         self.setup_main_window()
-
         print("Setting up agent grid...")
         self.agent_grid.setup()
         print("Setting up settings panel...")
@@ -78,16 +77,6 @@ class ControlPanel(Tk):
         title = Label(self, text="Valorant Instalocker", fg="#ff4b50", font="Rockwell 30", bg="#000000")
         title.pack(pady=10)
 
-    def setup_buy_menu(self) -> None:
-        self.buy_menu.configure(
-            bg="black",
-            height=500,
-            width=500,
-
-        )
-        Button(self.buy_menu, text="Buy").pack()
-        self.buy_menu.grid(row=0, column=0, sticky="nsew")
-
     def update_settings_file(self) -> None:
         """
         Update settings file with current settings
@@ -101,7 +90,6 @@ class ControlPanel(Tk):
         Update the img_delay setting
         :param new_delay: New delay value to read the value from
         """
-
         if new_delay:
             self.settings["img_delay"] = float(new_delay)
         else:
@@ -120,10 +108,12 @@ class ControlPanel(Tk):
         except AttributeError:
             pass
 
+        # Make all agents, that aren't picked, white
         for but in self.agent_grid.buttons[:len(self.settings["unlocked_agents"])]:
             but.configure(
                 bg="white"
             )
+        # Make the selected agent black
         self.agent_grid.buttons[agent_num].configure(
             bg="black"
         )
@@ -133,7 +123,7 @@ class ControlPanel(Tk):
         Unlocks an agent to be selected by the user.
         :param agent_num: Integer representing the index of the agent in the agent_buttons list
         """
-        button_texts = get_button_texts(self.agent_grid.buttons)
+        button_texts = get_button_texts(self.agent_grid.buttons)  # Get the exact order of agents, from the agent grid
 
         self.settings["unlocked_agents"].append(button_texts[agent_num])
         self.settings["unlocked_agents"] = sorted(self.settings["unlocked_agents"])
@@ -148,20 +138,14 @@ class ControlPanel(Tk):
         :param agent_num: Integer representing the index of the agent in the agent_buttons list
         """
         agent_name = self.agent_grid.buttons[agent_num].cget("text")
-        if agent_name in DEFAULT_AGENTS:
+        if agent_name in DEFAULT_AGENTS:  # Don't allow locking of default agents
             return
-        self.settings["unlocked_agents"].remove(agent_name)
 
+        self.settings["unlocked_agents"].remove(agent_name)
         self.agent_grid.buttons[agent_num].configure(
             bg="gray",
             command=lambda num=agent_num: self.unlock_agent(num)
         )
-
-    def toggle_buy_menu(self) -> None:
-        """
-        Toggle the menu for selecting first round buy
-        """
-        pass
 
     def change_agents(self, enable_change: bool) -> None:
         """
@@ -169,7 +153,7 @@ class ControlPanel(Tk):
         :param enable_change: True if the user can change which agents are unlocked, False otherwise.
         """
         agent_buttons = self.agent_grid.buttons
-        if enable_change:
+        if enable_change:  # Toggle on
             for i in range(len(self.settings["unlocked_agents"])):
                 agent_buttons[i].configure(
                     background="lightgray",
@@ -180,7 +164,7 @@ class ControlPanel(Tk):
                 agent_buttons[i].configure(
                     background="gray",
                 )
-        else:
+        else:  # Toggle off
             self.agent_grid.destroy_buttons()
             self.agent_grid.setup()
 
@@ -204,7 +188,7 @@ class ControlPanel(Tk):
         Run the instalocker program
         """
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
+        self.IL_thread = threading.Thread(target=self.IL.run, args=(
             agent_num,
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
@@ -246,18 +230,14 @@ class ControlPanel(Tk):
         self.IL.is_active = True
 
         while self.IL.is_active:
-            status_label = self.StatusField.status_label
-            status_label.configure(
+            self.StatusField.status_label.configure(
                 text="Waiting for agent select",
                 fg="yellow"
             )
-
             self.IL.run()
-
             if not self.settings["auto_restart"]:
                 self.IL.is_active = False
-
-            status_label.configure(
+            self.StatusField.status_label.configure(
                 text="Waiting for main menu",
                 fg="yellow"
             )
