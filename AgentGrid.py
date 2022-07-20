@@ -5,6 +5,9 @@ from helpers import get_locked_agents
 
 
 class AgentGrid(Canvas):
+    """
+    Grid of all agents, to be selected by the user.
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent

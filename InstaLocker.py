@@ -6,9 +6,11 @@ from constants import *
 
 
 class InstaLocker:
+    """
+    The class that will lock agent based on number, and keep track of loading screens
+    """
     def __init__(self, agent_num: int, img_delay_time: float, play_screen_delay_time: float) -> None:
         """
-        The class that will lock agent based on number, and keep track of loading screens
         :param agent_num: The number of the agent, left to right, top to bottom, on the users' agent select screen
         :param img_delay_time: The time to wait between grabbing images
         :param play_screen_delay_time: The time to wait between grabbing images while in game
