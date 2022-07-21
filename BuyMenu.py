@@ -28,8 +28,8 @@ class BuyMenu(Canvas):
         self.setup_guns()
         self.setup_abilities()
         self.shield_button = ShieldButton(self)
-        self.shield_button.grid(column=5, row=0, padx=1, pady=1, rowspan=2)
-        self.toggle_button = Button(self, text="Auto Buy", font="Rockwell 12", command=lambda: self.toggle_auto_buy())
+        self.shield_button.grid(column=5, row=0, padx=1, pady=1, rowspan=2, sticky="sew")
+        self.toggle_button = Button(self, text="Toggle Auto-Buy", font="Rockwell 12", command=lambda: self.toggle_auto_buy())
         self.toggle_button.configure(
             bg=("#79c7c0" if self.parent.settings["auto_buy"] else "#ff4b50"),   # Set button color based on auto_buy setting
         )
@@ -44,9 +44,9 @@ class BuyMenu(Canvas):
 
             # Select pistol from settings
             if gun_name == self.parent.settings["shop_settings"]["pistol"]:
-                gun_button.configure(bg="black")
+                gun_button.configure(bg="#2abd8a")
 
-            gun_button.grid(column=i, row=0, padx=1, pady=1)
+            gun_button.grid(column=i, row=0, padx=8, pady=60)
             self.gun_buttons.append(gun_button)
 
     def setup_abilities(self) -> None:
@@ -91,8 +91,8 @@ class GunButton(Button):
             font="Rockwell 12",
             height=3,
             width=10,
-            background="white",
-            foreground="#ff4b50",
+            background="gray",
+            foreground="white",
             command=self.select,
         )
 
@@ -100,11 +100,11 @@ class GunButton(Button):
         """
         Select the gun
         """
-        self.configure(bg="black")
+        self.configure(bg="#2abd8a")
 
         for gun_button in self.parent.gun_buttons:
             if gun_button is not self:
-                gun_button.configure(bg="white")
+                gun_button.configure(bg="gray")
 
         self.parent.parent.settings["shop_settings"]["pistol"] = self.gun_name
 
@@ -122,8 +122,8 @@ class AbilityButton(Button):
             font="Rockwell 12",
             height=3,
             width=10,
-            background="white",
-            foreground="#ff4b50",
+            background="gray",
+            foreground="white",
             command=self.increase_count
         )
         self.bind("<Button-3>", lambda _: self.decrease_count())
@@ -151,23 +151,22 @@ class ShieldButton(Button):
         self.configure(
             text="Light Shield",
             font="Rockwell 12",
-            height=7,
+            height=10,
             width=10,
-            foreground="#ff4b50",
+            foreground="white",
             command=self.toggle
         )
         self.configure(
-            bg=("black" if self.parent.parent.settings["shop_settings"]["buy_armor"] else "white"),
+            bg=("#2abd8a" if self.parent.parent.settings["shop_settings"]["buy_armor"] else "gray"),
         )
+        self.bind("<Button-3>", lambda _: self.toggle())
 
     def toggle(self):
         if self.is_active:
-            self.configure(bg="white")
+            self.configure(bg="gray")
             self.is_active = False
             self.parent.parent.settings["shop_settings"]["buy_armor"] = False
-            print(self.parent.parent.settings)
         else:
-            self.configure(bg="black")
+            self.configure(bg="#2abd8a")
             self.is_active = True
             self.parent.parent.settings["shop_settings"]["buy_armor"] = True
-            print(self.parent.parent.settings)

@@ -58,9 +58,10 @@ class ControlPanel(Tk):
         Set up the main window, including title and size
         """
         self.title("Valorant Instalocker")
-        self.minsize(850, 514)
+        self.minsize(962, 549)
         self.maxsize(976, 549)  # Rez of background img
-        self.geometry("960x540")  # Default size
+        self.geometry("976x549")  # Default size
+        # self.resizable(False, False)
         self.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
         # Setup background image
