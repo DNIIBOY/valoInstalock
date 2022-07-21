@@ -25,13 +25,14 @@
     "auto_restart": true,
     "img_delay": 0.1,
     "shop_settings": {
-        "pistol": "Sheriff",
+        "pistol": "Ghost",
         "ability_counts": [
+            2,
             0,
-            0,
-            0,
+            2,
             0
         ],
         "buy_armor": false
-    }
+    },
+    "auto_buy": false
 }

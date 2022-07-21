@@ -15,11 +15,10 @@ class BuyMenu(Canvas):
         self.gun_buttons = []
         self.ability_buttons = []
         self.shield_button = None
+        self.toggle_button = None
 
     def setup(self):
         self.configure(
-            width=600,
-            height=700,
             bg="#454d59",
             highlightbackground="black"
         )
@@ -30,6 +29,11 @@ class BuyMenu(Canvas):
         self.setup_abilities()
         self.shield_button = ShieldButton(self)
         self.shield_button.grid(column=5, row=0, padx=1, pady=1, rowspan=2)
+        self.toggle_button = Button(self, text="Auto Buy", font="Rockwell 12", command=lambda: self.toggle_auto_buy())
+        self.toggle_button.configure(
+            bg=("#79c7c0" if self.parent.settings["auto_buy"] else "#ff4b50"),   # Set button color based on auto_buy setting
+        )
+        self.toggle_button.place(relx=0.4, rely=0.85, relwidth=0.2, relheight=0.1)
 
     def setup_guns(self) -> None:
         """
@@ -62,8 +66,19 @@ class BuyMenu(Canvas):
             self.place_forget()
             self.is_visible = False
         else:
-            self.place(relx=0.2, rely=0.2, relwidth=0.7, relheight=0.7)
+            self.place(relx=0.15, rely=0.2, relwidth=0.7, relheight=0.7)
             self.is_visible = True
+
+    def toggle_auto_buy(self):
+        """
+        Toggle the auto-buyer on/off
+        """
+        if self.parent.settings["auto_buy"]:
+            self.parent.settings["auto_buy"] = False
+            self.toggle_button.configure(bg="#ff4b50")
+        else:
+            self.parent.settings["auto_buy"] = True
+            self.toggle_button.configure(bg="#79c7c0")
 
 
 class GunButton(Button):

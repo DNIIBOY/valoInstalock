@@ -22,13 +22,10 @@ class ControlPanel(Tk):
         # Setup label for background image
         self.background_label = Label(self)
 
-        # self.agent_grid = Canvas(self, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
         self.StatusField = StatusField(self)  # Status field with run button and status label
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
-        self.show_settings = False  # Whether the settings panel is shown
-        self.show_buy_menu = False  # Whether the first round buy menu is shown
 
         self.IL = None  # Object of instalocker class, for instalocking
         self.IL_thread = None  # Thread for running actual instalocker
