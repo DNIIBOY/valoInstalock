@@ -10,6 +10,7 @@ from BuyMenu import BuyMenu
 from SettingsPanel import SettingsPanel
 from StatusField import StatusField
 
+from AutoBuyer import AutoBuyer
 from InstaLocker import InstaLocker
 
 
@@ -48,7 +49,7 @@ class ControlPanel(Tk):
         self.StatusField.setup()
         print("Setting up buy menu...")
         self.buy_menu.setup()
-
+        print("Running program...")
         self.mainloop()
 
     def setup_main_window(self) -> None:
@@ -57,7 +58,7 @@ class ControlPanel(Tk):
         """
         self.title("Valorant Instalocker")
         self.minsize(850, 514)
-        # self.maxsize(976, 549)  # Rez of background img
+        self.maxsize(976, 549)  # Rez of background img
         self.geometry("960x540")  # Default size
         self.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
@@ -183,7 +184,7 @@ class ControlPanel(Tk):
         Run the instalocker program
         """
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
+        self.IL_thread = threading.Thread(target=self.main_thread, args=(
             agent_num,
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
@@ -214,7 +215,7 @@ class ControlPanel(Tk):
             fg="lightgreen"
         )
 
-    def run_instalocker(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
+    def main_thread(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
@@ -231,6 +232,10 @@ class ControlPanel(Tk):
             )
 
             self.IL.run()
+
+            if self.settings["auto_buy"]:
+                AB = AutoBuyer(self.settings["shop_settings"])
+                AB.run()
 
             if not self.settings["auto_restart"] or not self.IL.is_active:
                 # If not set to auto restart, or if the instalocker has been stopped, break

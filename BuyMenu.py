@@ -153,9 +153,11 @@ class ShieldButton(Button):
             font="Rockwell 12",
             height=7,
             width=10,
-            background="white",
             foreground="#ff4b50",
             command=self.toggle
+        )
+        self.configure(
+            bg=("black" if self.parent.parent.settings["shop_settings"]["buy_armor"] else "white"),
         )
 
     def toggle(self):
@@ -163,7 +165,9 @@ class ShieldButton(Button):
             self.configure(bg="white")
             self.is_active = False
             self.parent.parent.settings["shop_settings"]["buy_armor"] = False
+            print(self.parent.parent.settings)
         else:
             self.configure(bg="black")
             self.is_active = True
             self.parent.parent.settings["shop_settings"]["buy_armor"] = True
+            print(self.parent.parent.settings)
