@@ -32,13 +32,21 @@ AGENT_LIST = [
 # The valorant agents, that are always unlocked
 DEFAULT_AGENTS = ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"]
 
+# The default settings for the auto-buyer
+DEFAULT_BUY = {
+    "pistol": "Ghost",
+    "ability_counts": [0, 0, 0, 0],
+    "buy_armor": False
+}
+
 # Default settings file contents
 DEFAULT_SETTINGS = {
     "unlocked_agents": DEFAULT_AGENTS,
     "selected_agent": "Brimstone",
     "img_delay": 0.5,
     "play_screen_delay_time": 3.0,
-    "auto_restart": False
+    "auto_restart": False,
+    "shop_settings": DEFAULT_BUY,
 }
 
 # Pixel locations for detection pictures
