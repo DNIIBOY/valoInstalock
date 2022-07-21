@@ -25,14 +25,14 @@
     "auto_restart": true,
     "img_delay": 0.1,
     "shop_settings": {
-        "pistol": "Classic",
+        "pistol": "Shorty",
         "ability_counts": [
-            1,
-            1,
-            2,
-            0
+            0,
+            0,
+            0,
+            2
         ],
-        "buy_armor": false
+        "buy_armor": true
     },
     "auto_buy": true
 }

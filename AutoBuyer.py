@@ -15,9 +15,13 @@ class AutoBuyer:
 
         self.clicks = {}  # Key is set of coordinates, value is number of clicks
 
-    def run(self):
+    def run(self) -> bool:
+        self.is_active = True
+        if not self.wait_for_game():
+            return False
         self.calculate_clicks()
         self.buy_items()
+        return True
 
     def wait_for_game(self) -> bool:
         """
@@ -84,5 +88,7 @@ class AutoBuyer:
 if __name__ == '__main__':
     sleep(5)
     AB = AutoBuyer(0.2, get_settings(f"{CURRENT_DIR}\\settings.json")["shop_settings"])
-    AB.run()
+    AB.is_active = True
+    AB.wait_for_game()
+    # AB.run()
     print(AB.clicks)

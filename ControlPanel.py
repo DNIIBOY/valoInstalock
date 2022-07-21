@@ -29,7 +29,8 @@ class ControlPanel(Tk):
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
 
         self.IL = None  # Object of instalocker class, for instalocking
-        self.IL_thread = None  # Thread for running actual instalocker
+        self.AB = None  # Object of autobuyer class, for autobuying
+        self.main_thread = None  # Thread for running instalocker and other functions
 
         self.agent_grid = AgentGrid(self)
         self.settings_panel = SettingsPanel(self)
@@ -184,13 +185,13 @@ class ControlPanel(Tk):
         Run the instalocker program
         """
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.main_thread, args=(
+        self.main_thread = threading.Thread(target=self.main_function, args=(
             agent_num,
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
         )
                                           )
-        self.IL_thread.start()
+        self.main_thread.start()
         self.StatusField.run_button.configure(
             text="Stop",
             command=lambda: self.stop_instalocker(),
@@ -202,6 +203,7 @@ class ControlPanel(Tk):
         """
         try:
             self.IL.is_active = False
+            self.AB.is_active = False
         except AttributeError:
             # If the instalocker thread has not been started yet, do nothing.
             pass
@@ -215,7 +217,7 @@ class ControlPanel(Tk):
             fg="lightgreen"
         )
 
-    def main_thread(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
+    def main_function(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
@@ -233,9 +235,13 @@ class ControlPanel(Tk):
 
             self.IL.run()
 
-            if self.settings["auto_buy"]:
-                AB = AutoBuyer(self.settings["img_delay"], self.settings["shop_settings"])
-                AB.run()
+            if self.settings["auto_buy"] and self.IL.is_active:
+                self.AB = AutoBuyer(img_delay, self.settings["shop_settings"])
+                self.StatusField.status_label.configure(
+                    text="Waiting for game load",
+                    fg="yellow"
+                )
+                self.AB.run()
 
             if not self.settings["auto_restart"] or not self.IL.is_active:
                 # If not set to auto restart, or if the instalocker has been stopped, break

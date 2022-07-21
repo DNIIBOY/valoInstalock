@@ -57,7 +57,7 @@ PIXEL_LOCATIONS = {
     "play_screen_0": (758, 0),  # White line left of play button
     "play_screen_1": (16, 10),  # Top left corner Valorant logo
     "in_game_0": (643, 1027),  # 0 in the 100 hp indicator
-    "in_game_1": (423, 49),  # Green indicator on own team
+    "in_game_1": (1115, 279),  # Bottom right corner of buy phase indicator
 }
 
 # RGB values for detection pictures
@@ -67,7 +67,7 @@ RGB_VALUES = {
     "play_screen_0": (255, 255, 255),
     "play_screen_1": (254, 254, 254),
     "in_game_0": (255, 255, 255),
-    "in_game_1": (96, 175, 151),
+    "in_game_1": (246, 246, 246),
 }
 
 # Pixel locations of buttons to click
