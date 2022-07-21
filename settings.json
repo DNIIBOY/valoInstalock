@@ -1,24 +1,38 @@
 {
     "unlocked_agents": [
+        "Astra",
+        "Breach",
         "Brimstone",
+        "Chamber",
+        "Cypher",
+        "Fade",
         "Jett",
+        "KAY/O",
+        "Killjoy",
+        "Neon",
+        "Omen",
         "Phoenix",
+        "Raze",
+        "Reyna",
         "Sage",
-        "Sova"
+        "Skye",
+        "Sova",
+        "Viper",
+        "Yoru"
     ],
-    "selected_agent": "Brimstone",
-    "img_delay": 0.5,
+    "selected_agent": "Yoru",
+    "img_delay": 0.1,
     "play_screen_delay_time": 3.0,
-    "auto_restart": false,
+    "auto_restart": true,
     "auto_buy": false,
     "shop_settings": {
-        "pistol": "Ghost",
+        "pistol": "Shorty",
         "ability_counts": [
             0,
             0,
-            0,
+            1,
             0
         ],
-        "buy_armor": false
+        "buy_armor": true
     }
 }

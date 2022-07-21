@@ -73,6 +73,7 @@ class AutoBuyer:
         sleep(0.1)
         for location, count in self.clicks.items():
             self.buy_item(location, count)
+            sleep(0.2)
         keyboard.press_and_release("b")
 
     def calculate_clicks(self) -> None:
