@@ -35,6 +35,8 @@ class SettingsPanel(Canvas):
         auto_restart_toggle = Button(self, text="Auto Restart", command=lambda: self.toggle_auto_restart())
         auto_restart_toggle.configure(bg=("#79c7c0" if self.parent.settings["auto_restart"] else "#ff4b50"))
 
+        buy_menu_toggle = Button(self, text="Buy Menu", command=lambda: self.parent.buy_menu.toggle_visibility())
+
         delay_entry_label = Label(self, text="Check Delay [s]:", bg="black", fg="white")
 
         validation = self.register(float_validation)  # Only allow float characters
@@ -47,19 +49,18 @@ class SettingsPanel(Canvas):
         img_delay_entry.insert(0, str(self.parent.settings["img_delay"]))
         img_delay_entry.bind("<KeyRelease>", lambda _: self.parent.update_img_delay(img_delay_entry.get()))
 
-        selected_agents_button.grid(column=0, row=0, padx=10, pady=10)
-        all_agents_button.grid(column=1, row=0, padx=10, pady=10)
-        auto_restart_toggle.grid(column=2, row=0, padx=10, pady=10)
-        delay_entry_label.grid(column=3, row=0, padx=2, pady=10)
-        img_delay_entry.grid(column=4, row=0, padx=10, pady=10)
-
         self.buttons = {
             "selected_agents_button": selected_agents_button,
             "all_agents_button": all_agents_button,
             "auto_restart_toggle": auto_restart_toggle,
+            "buy_menu_toggle": buy_menu_toggle,
             "delay_entry_label": delay_entry_label,
             "img_delay_entry": img_delay_entry,
         }
+
+        # Grid the buttons
+        for i, button in enumerate(self.buttons.values()):
+            button.grid(column=i, row=1, padx=10, pady=10)
 
         for key in self.buttons:
             self.buttons[key].configure(font="Rockwell 12")

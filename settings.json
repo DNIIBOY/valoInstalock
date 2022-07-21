@@ -23,9 +23,9 @@
     "selected_agent": "Yoru",
     "play_screen_delay_time": 3.0,
     "auto_restart": true,
-    "img_delay": 4.2,
+    "img_delay": 0.1,
     "shop_settings": {
-        "pistol": "Ghost",
+        "pistol": "Sheriff",
         "ability_counts": [
             0,
             0,
