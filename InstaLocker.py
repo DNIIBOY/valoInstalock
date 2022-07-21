@@ -6,15 +6,15 @@ from constants import *
 
 
 class InstaLocker:
-    def __init__(self, agent_num: int, img_delay_time: float, play_screen_delay_time: float) -> None:
+    def __init__(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
         """
         The class that will lock agent based on number, and keep track of loading screens
         :param agent_num: The number of the agent, left to right, top to bottom, on the users' agent select screen
-        :param img_delay_time: The time to wait between grabbing images
+        :param img_delay: The time to wait between grabbing images
         :param play_screen_delay_time: The time to wait between grabbing images while in game
         """
         self.agent_num = agent_num
-        self.img_delay_time = img_delay_time
+        self.img_delay = img_delay
         self.play_screen_delay_time = play_screen_delay_time
 
         # Coordinates for agent select
@@ -77,7 +77,7 @@ class InstaLocker:
             if rgb_value_0 == RGB_VALUES["select_screen_0"] and rgb_value_1 == RGB_VALUES["select_screen_1"]:
                 return True
 
-            sleep(self.img_delay_time)
+            sleep(self.img_delay)
         return False
 
     def instalock(self) -> None:

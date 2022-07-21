@@ -234,7 +234,7 @@ class ControlPanel(Tk):
             self.IL.run()
 
             if self.settings["auto_buy"]:
-                AB = AutoBuyer(self.settings["shop_settings"])
+                AB = AutoBuyer(self.settings["img_delay"], self.settings["shop_settings"])
                 AB.run()
 
             if not self.settings["auto_restart"] or not self.IL.is_active:

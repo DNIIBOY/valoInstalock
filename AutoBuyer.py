@@ -1,13 +1,15 @@
 import keyboard
 import pyautogui
 from time import sleep
+from PIL import ImageGrab
 
 from constants import *
 from helpers import get_settings
 
 
 class AutoBuyer:
-    def __init__(self, shop_settings: dict):
+    def __init__(self, img_delay: float, shop_settings: dict):
+        self.img_delay = img_delay
         self.shop_settings = shop_settings
         self.is_active = False
 
@@ -16,6 +18,31 @@ class AutoBuyer:
     def run(self):
         self.calculate_clicks()
         self.buy_items()
+
+    def wait_for_game(self) -> bool:
+        """
+        Wait for the player to spawn in to the game
+        :return: Boolean, returns true if the player spawns, false if interrupted
+        """
+        while self.is_active:
+            # Get pixel locations from constants file
+            box0 = PIXEL_LOCATIONS["in_game_0"]
+            box1 = PIXEL_LOCATIONS["in_game_1"]
+
+            # Grab two images, to make sure that the user is on the correct screen
+            in_game_0 = ImageGrab.grab(bbox=(box0[0], box0[1], box0[0] + 1, box0[1] + 1))
+            in_game_1 = ImageGrab.grab(bbox=(box1[0], box1[1], box1[0] + 1, box1[1] + 1))
+
+            # Get RGB values of images
+            rgb_value_0 = in_game_0.getpixel((0, 0))
+            rgb_value_1 = in_game_1.getpixel((0, 0))
+
+            # Compare captured RGB values to reference RGB values
+            if rgb_value_0 == RGB_VALUES["in_game_0"] and rgb_value_1 == RGB_VALUES["in_game_1"]:
+                return True
+
+            sleep(self.img_delay)
+        return False
 
     def buy_items(self):
         """
@@ -56,6 +83,6 @@ class AutoBuyer:
 
 if __name__ == '__main__':
     sleep(5)
-    AB = AutoBuyer(get_settings(f"{CURRENT_DIR}\\settings.json")["shop_settings"])
+    AB = AutoBuyer(0.2, get_settings(f"{CURRENT_DIR}\\settings.json")["shop_settings"])
     AB.run()
     print(AB.clicks)
