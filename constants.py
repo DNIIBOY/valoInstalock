@@ -7,7 +7,6 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     CURRENT_DIR = dirname(realpath(__file__))
 
-
 # All valorant agents
 AGENT_LIST = [
     "Astra",
@@ -33,13 +32,22 @@ AGENT_LIST = [
 # The valorant agents, that are always unlocked
 DEFAULT_AGENTS = ["Brimstone", "Jett", "Phoenix", "Sage", "Sova"]
 
+# The default settings for the auto-buyer
+DEFAULT_BUY = {
+    "pistol": "Ghost",
+    "ability_counts": [0, 0, 0, 0],
+    "buy_armor": False
+}
+
 # Default settings file contents
 DEFAULT_SETTINGS = {
     "unlocked_agents": DEFAULT_AGENTS,
     "selected_agent": "Brimstone",
     "img_delay": 0.5,
     "play_screen_delay_time": 3.0,
-    "auto_restart": False
+    "auto_restart": False,
+    "auto_buy": False,
+    "shop_settings": DEFAULT_BUY,
 }
 
 # Pixel locations for detection pictures
@@ -47,7 +55,9 @@ PIXEL_LOCATIONS = {
     "select_screen_0": (841, 784),  # Top left corner of "lock in" button
     "select_screen_1": (950, 866),  # Yellow arrow above agents
     "play_screen_0": (758, 0),  # White line left of play button
-    "play_screen_1": (16, 10)  # Top left corner Valorant logo
+    "play_screen_1": (16, 10),  # Top left corner Valorant logo
+    "in_game_0": (643, 1027),  # 0 in the 100 hp indicator
+    "in_game_1": (1115, 279),  # Bottom right corner of buy phase indicator
 }
 
 # RGB values for detection pictures
@@ -55,7 +65,9 @@ RGB_VALUES = {
     "select_screen_0": (255, 255, 255),
     "select_screen_1": (234, 238, 178),
     "play_screen_0": (255, 255, 255),
-    "play_screen_1": (254, 254, 254)
+    "play_screen_1": (254, 254, 254),
+    "in_game_0": (255, 255, 255),
+    "in_game_1": (246, 246, 246),
 }
 
 # Pixel locations of buttons to click
@@ -73,3 +85,12 @@ CLICK_LOCATIONS = {
     "ghost": (475, 575),
     "sheriff": (475, 700),
 }
+
+# Available guns in the shop
+AVAILABLE_GUNS = [
+    "Classic",
+    "Shorty",
+    "Frenzy",
+    "Ghost",
+    "Sheriff"
+]

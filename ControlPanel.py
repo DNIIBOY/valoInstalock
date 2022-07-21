@@ -6,9 +6,11 @@ from constants import *
 from helpers import get_settings, get_button_texts
 
 from AgentGrid import AgentGrid
+from BuyMenu import BuyMenu
 from SettingsPanel import SettingsPanel
 from StatusField import StatusField
 
+from AutoBuyer import AutoBuyer
 from InstaLocker import InstaLocker
 
 
@@ -24,19 +26,18 @@ class ControlPanel(Tk):
         # Setup label for background image
         self.background_label = Label(self)
 
-        # self.agent_grid = Canvas(self, height=200, width=600)  # Grid of agents
         self.settings_canvas = Canvas(self)  # Canvas that toggles with settings
         self.StatusField = StatusField(self)  # Status field with run button and status label
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
-        self.show_settings = False  # Whether the settings panel is shown
-        self.show_buy_menu = False  # Whether the first round buy menu is shown
 
         self.IL = None  # Object of instalocker class, for instalocking
-        self.IL_thread = None  # Thread for running actual instalocker
+        self.AB = None  # Object of autobuyer class, for autobuying
+        self.main_thread = None  # Thread for running instalocker and other functions
 
         self.agent_grid = AgentGrid(self)
         self.settings_panel = SettingsPanel(self)
+        self.buy_menu = BuyMenu(self)
 
     def start(self):
         """
@@ -50,7 +51,9 @@ class ControlPanel(Tk):
         self.settings_panel.setup()
         print("Setting up status field...")
         self.StatusField.setup()
-
+        print("Setting up buy menu...")
+        self.buy_menu.setup()
+        print("Running program...")
         self.mainloop()
 
     def setup_main_window(self) -> None:
@@ -58,9 +61,10 @@ class ControlPanel(Tk):
         Set up the main window, including title and size
         """
         self.title("Valorant Instalocker")
-        self.minsize(850, 500)
-        self.maxsize(960, 540)
-        self.geometry("960x540")  # Default size
+        self.minsize(962, 549)
+        self.maxsize(976, 549)  # Rez of background img
+        self.geometry("976x549")  # Default size
+        # self.resizable(False, False)
         self.iconbitmap(f"{CURRENT_DIR}\\img\\logo.ico")
 
         # Setup background image
@@ -185,13 +189,13 @@ class ControlPanel(Tk):
         Run the instalocker program
         """
         agent_num = self.settings["unlocked_agents"].index(self.settings["selected_agent"])
-        self.IL_thread = threading.Thread(target=self.run_instalocker, args=(
+        self.main_thread = threading.Thread(target=self.main_function, args=(
             agent_num,
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
         )
                                           )
-        self.IL_thread.start()
+        self.main_thread.start()
         self.StatusField.run_button.configure(
             text="Stop",
             command=lambda: self.stop_instalocker(),
@@ -203,6 +207,7 @@ class ControlPanel(Tk):
         """
         try:
             self.IL.is_active = False
+            self.AB.is_active = False
         except AttributeError:
             # If the instalocker thread has not been started yet, do nothing.
             pass
@@ -216,7 +221,7 @@ class ControlPanel(Tk):
             fg="lightgreen"
         )
 
-    def run_instalocker(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
+    def main_function(self, agent_num: int, img_delay: float, play_screen_delay_time: float) -> None:
         """
         Run the instalocker program as a separate thread
         :param agent_num: Integer representing the index of the agent in the users' agent lock screen
@@ -233,6 +238,14 @@ class ControlPanel(Tk):
             )
 
             self.IL.run()
+
+            if self.settings["auto_buy"] and self.IL.is_active:
+                self.AB = AutoBuyer(img_delay, self.settings["shop_settings"])
+                self.StatusField.status_label.configure(
+                    text="Waiting for game load",
+                    fg="yellow"
+                )
+                self.AB.run()
 
             if not self.settings["auto_restart"] or not self.IL.is_active:
                 # If not set to auto restart, or if the instalocker has been stopped, break
