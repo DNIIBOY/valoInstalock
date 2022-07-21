@@ -45,7 +45,24 @@ class AutoBuyer:
             if rgb_value_0 == RGB_VALUES["in_game_0"] and rgb_value_1 == RGB_VALUES["in_game_1"]:
                 return True
 
+            # Grab images to check for main menu, in case of match cancel
+            box0 = PIXEL_LOCATIONS["play_screen_0"]
+            box1 = PIXEL_LOCATIONS["play_screen_1"]
+
+            # Grab two images, to make sure that the user is on the correct screen
+            play_screen_0 = ImageGrab.grab(bbox=(box0[0], box0[1], box0[0] + 1, box0[1] + 1))
+            play_screen_1 = ImageGrab.grab(bbox=(box1[0], box1[1], box1[0] + 1, box1[1] + 1))
+
+            # Get RGB values of images
+            rgb_value_0 = play_screen_0.getpixel((0, 0))
+            rgb_value_1 = play_screen_1.getpixel((0, 0))
+
+            # Compare captured RGB values to reference RGB values
+            if rgb_value_0 == RGB_VALUES["play_screen_0"] and rgb_value_1 == RGB_VALUES["play_screen_1"]:
+                return False
+
             sleep(self.img_delay)
+
         return False
 
     def buy_items(self):
