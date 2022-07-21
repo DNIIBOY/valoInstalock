@@ -9,7 +9,7 @@
 <a href="https://github.com/DNIIBOY/valoInstalock/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/DNIIBOY/valoInstalock"></a>
 <a href="https://python.org"><img alt="Python 3.10" src="https://img.shields.io/badge/python-3.10-blue"></a>
 <img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/DNIIBOY/valoInstalock/latest">
-<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/DNIIBOY/valoInstalock?color=orange">
+<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/DNIIBOY/valoInstalock?color=FF8A00">
 </p>
 
 ## Requirements

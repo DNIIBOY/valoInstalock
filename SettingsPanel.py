@@ -4,6 +4,9 @@ from helpers import float_validation
 
 
 class SettingsPanel(Canvas):
+    """
+    All settings can be changed in the settings panel
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent

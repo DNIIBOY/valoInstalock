@@ -15,6 +15,9 @@ from InstaLocker import InstaLocker
 
 
 class ControlPanel(Tk):
+    """
+    The main controlpanel for all features of the program
+    """
     def __init__(self):
         super().__init__()
 

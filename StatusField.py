@@ -2,6 +2,9 @@ from tkinter import *
 
 
 class StatusField(Canvas):
+    """
+    An area containing information such as the current state of the program, and the run button
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
