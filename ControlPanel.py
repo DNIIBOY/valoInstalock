@@ -6,6 +6,7 @@ from constants import *
 from helpers import get_settings, get_button_texts
 
 from AgentGrid import AgentGrid
+from SpikeTimerWindow import SpikeTimerWindow
 from BuyMenu import BuyMenu
 from SettingsPanel import SettingsPanel
 from StatusField import StatusField
@@ -18,10 +19,9 @@ class ControlPanel(Tk):
     """
     The main controlpanel for all features of the program
     """
+
     def __init__(self):
         super().__init__()
-
-        self.buy_menu = Frame(self)  # Frame for first round buy menu
 
         # Setup label for background image
         self.background_label = Label(self)
@@ -31,13 +31,17 @@ class ControlPanel(Tk):
 
         self.settings = get_settings(f"{CURRENT_DIR}\\settings.json")
 
-        self.IL = None  # Object of instalocker class, for instalocking
         self.AB = None  # Object of autobuyer class, for autobuying
+        self.IL = None  # Object of instalocker class, for instalocking
+        self.ST = None  # Object of spike timer class, for spike timer
+
         self.main_thread = None  # Thread for running instalocker and other functions
+        self.spike_timer_thread = None  # Thread for running spike timer
 
         self.agent_grid = AgentGrid(self)
         self.settings_panel = SettingsPanel(self)
         self.buy_menu = BuyMenu(self)
+        self.spike_timer_window = SpikeTimerWindow(self)
 
     def start(self):
         """
@@ -53,6 +57,8 @@ class ControlPanel(Tk):
         self.StatusField.setup()
         print("Setting up buy menu...")
         self.buy_menu.setup()
+        print("Setting up spike timer...")
+        self.spike_timer_window.setup()
         print("Running program...")
         self.mainloop()
 
@@ -194,7 +200,7 @@ class ControlPanel(Tk):
             self.settings["img_delay"],
             self.settings["play_screen_delay_time"]
         )
-                                          )
+                                            )
         self.main_thread.start()
         self.StatusField.run_button.configure(
             text="Stop",
@@ -206,8 +212,8 @@ class ControlPanel(Tk):
         Stop the instalocker program
         """
         try:
-            self.IL.is_active = False
             self.AB.is_active = False
+            self.IL.is_active = False
         except AttributeError:
             # If the instalocker thread has not been started yet, do nothing.
             pass
