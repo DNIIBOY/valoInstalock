@@ -48,24 +48,14 @@ class SpikeTimer:
             rgb_value_0 = spike_plant.getpixel((0, 0))
 
             # Compare captured RGB values to reference RGB values
-            print(rgb_value_0)
             if rgb_value_0 in [RGB_VALUES[f"spike_plant_{i}"] for i in range(4)]:
                 self.had_wrong_frame = False
                 return True
 
             elif not self.had_wrong_frame:
                 self.had_wrong_frame = True
-                print("Wrong frame: ", self.had_wrong_frame)
                 return True
-            print("Wrong frame: ", self.had_wrong_frame)
 
             sleep(self.img_delay)
 
         return False
-
-
-if __name__ == '__main__':
-    ST = SpikeTimer(0.1)
-    ST.is_active = True
-    while ST.is_active:
-        print(ST.check_spike_plant())

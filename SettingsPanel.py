@@ -18,7 +18,7 @@ class SettingsPanel(Canvas):
     def setup(self) -> None:
         self.configure(
             height=49,
-            width=575,
+            width=811,
             bg="black"
         )
         self.pack()
@@ -38,6 +38,9 @@ class SettingsPanel(Canvas):
         auto_restart_toggle = Button(self, text="Auto Restart", command=lambda: self.toggle_auto_restart())
         auto_restart_toggle.configure(bg=("#79c7c0" if self.parent.settings["auto_restart"] else "#ff4b50"))
 
+        spike_timer_toggle = Button(self, text="Spike timer", command=lambda: self.toggle_spike_timer())
+        spike_timer_toggle.configure(bg=("#79c7c0" if self.parent.settings["show_spike_timer"] else "#ff4b50"))
+
         buy_menu_toggle = Button(self, text="Buy Menu", command=lambda: self.parent.buy_menu.toggle_visibility())
 
         delay_entry_label = Label(self, text="Check Delay [s]:", bg="black", fg="white")
@@ -56,6 +59,7 @@ class SettingsPanel(Canvas):
             "selected_agents_button": selected_agents_button,
             "all_agents_button": all_agents_button,
             "auto_restart_toggle": auto_restart_toggle,
+            "spike_timer_toggle": spike_timer_toggle,
             "buy_menu_toggle": buy_menu_toggle,
             "delay_entry_label": delay_entry_label,
             "img_delay_entry": img_delay_entry,
@@ -97,5 +101,20 @@ class SettingsPanel(Canvas):
         else:
             self.parent.settings["auto_restart"] = True
             self.buttons["auto_restart_toggle"].configure(
+                bg="#79c7c0",
+            )
+
+    def toggle_spike_timer(self) -> None:
+        """
+        Toggle whether the program auto restarts for the next game
+        """
+        if self.parent.settings["show_spike_timer"]:
+            self.parent.settings["show_spike_timer"] = False
+            self.buttons["spike_timer_toggle"].configure(
+                bg="#ff4b50",
+            )
+        else:
+            self.parent.settings["show_spike_timer"] = True
+            self.buttons["spike_timer_toggle"].configure(
                 bg="#79c7c0",
             )

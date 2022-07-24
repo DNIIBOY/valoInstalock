@@ -21,9 +21,10 @@
         "Yoru"
     ],
     "selected_agent": "Yoru",
-    "img_delay": 0.1,
+    "img_delay": 0.5,
     "play_screen_delay_time": 3.0,
     "auto_restart": true,
+    "show_spike_timer": true,
     "auto_buy": true,
     "shop_settings": {
         "pistol": "Ghost",
@@ -34,6 +35,5 @@
             0
         ],
         "buy_armor": false
-    },
-    "show_spike_timer": true
+    }
 }

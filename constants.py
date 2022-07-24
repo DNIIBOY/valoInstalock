@@ -46,9 +46,9 @@ DEFAULT_SETTINGS = {
     "img_delay": 0.5,
     "play_screen_delay_time": 3.0,
     "auto_restart": False,
+    "show_spike_timer": False,
     "auto_buy": False,
     "shop_settings": DEFAULT_BUY,
-    "show_spike_timer": False,
 }
 
 # Pixel locations for detection pictures
