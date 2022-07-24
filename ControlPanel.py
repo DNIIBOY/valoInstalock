@@ -1,4 +1,5 @@
 from tkinter import *
+from time import sleep
 import json
 import threading
 
@@ -13,6 +14,7 @@ from StatusField import StatusField
 
 from AutoBuyer import AutoBuyer
 from InstaLocker import InstaLocker
+from SpikeTimer import SpikeTimer
 
 
 class ControlPanel(Tk):
@@ -202,6 +204,11 @@ class ControlPanel(Tk):
         )
                                             )
         self.main_thread.start()
+
+        if self.settings["show_spike_timer"]:
+            self.spike_timer_thread = threading.Thread(target=self.spike_timer_function)
+            self.spike_timer_thread.start()
+
         self.StatusField.run_button.configure(
             text="Stop",
             command=lambda: self.stop_instalocker(),
@@ -211,12 +218,11 @@ class ControlPanel(Tk):
         """
         Stop the instalocker program
         """
-        try:
-            self.AB.is_active = False
-            self.IL.is_active = False
-        except AttributeError:
-            # If the instalocker thread has not been started yet, do nothing.
-            pass
+        for module in [self.AB, self.IL, self.ST]:
+            try:
+                module.is_active = False
+            except AttributeError:
+                pass
 
         self.StatusField.run_button.configure(
             text="Run",
@@ -266,8 +272,31 @@ class ControlPanel(Tk):
             if not self.IL.wait_for_play_screen():
                 self.IL.is_active = False
 
-        try:
-            self.stop_instalocker()
-        except RuntimeError:
-            # If the main window has been closed, do nothing.
-            pass
+        if self.settings["show_spike_timer"] and self.ST.is_active:
+            self.StatusField.status_label.configure(
+                text="Checking for spike plants",
+                fg="yellow"
+            )
+        else:
+            try:
+                self.stop_instalocker()
+            except RuntimeError:
+                # If the main window has been closed, do nothing.
+                pass
+
+    def spike_timer_function(self) -> None:
+        """
+        Function to run the spike timer
+        """
+        self.ST = SpikeTimer(self.settings["img_delay"])
+        self.ST.is_active = True
+        ST_was_active = False
+        while self.ST.is_active:
+            if self.ST.run():
+                self.spike_timer_window.show()
+                self.spike_timer_window.update_time(self.ST.time)
+                ST_was_active = True
+            elif ST_was_active:
+                sleep(3)
+                self.spike_timer_window.hide()
+                ST_was_active = False

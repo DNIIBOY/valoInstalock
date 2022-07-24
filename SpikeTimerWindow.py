@@ -20,8 +20,6 @@ class SpikeTimerWindow(Canvas):
         )
         self.timer_label.pack(padx=10, pady=5)
 
-        self.place(relx=0.35, rely=0.25, relwidth=0.3, height=200)
-
     def update_time(self, new_time: float) -> None:
         """
         Update the time and color of the timer

@@ -48,6 +48,7 @@ DEFAULT_SETTINGS = {
     "auto_restart": False,
     "auto_buy": False,
     "shop_settings": DEFAULT_BUY,
+    "show_spike_timer": False,
 }
 
 # Pixel locations for detection pictures
@@ -58,6 +59,7 @@ PIXEL_LOCATIONS = {
     "play_screen_1": (16, 10),  # Top left corner Valorant logo
     "in_game_0": (643, 1027),  # 0 in the 100 hp indicator
     "in_game_1": (1115, 279),  # Bottom right corner of buy phase indicator
+    "spike_plant": (957, 25)  # Spike plant indicator on top of screen
 }
 
 # RGB values for detection pictures
@@ -68,6 +70,10 @@ RGB_VALUES = {
     "play_screen_1": (254, 254, 254),
     "in_game_0": (255, 255, 255),
     "in_game_1": (246, 246, 246),
+    "spike_plant_0": (230, 0, 0),
+    "spike_plant_1": (170, 0, 0),
+    "spike_plant_2": (169, 0, 0),
+    "spike_plant_3": (124, 0, 0)
 }
 
 # Pixel locations of buttons to click
