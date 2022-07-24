@@ -265,7 +265,7 @@ class ControlPanel(Tk):
                 break
 
             self.StatusField.status_label.configure(
-                text="Waiting for main menu",
+                text=("Checking for spike plants" if self.settings["show_spike_timer"] else "Waiting for main menu"),
                 fg="yellow"
             )
 
@@ -291,12 +291,31 @@ class ControlPanel(Tk):
         self.ST = SpikeTimer(self.settings["img_delay"])
         self.ST.is_active = True
         ST_was_active = False
+        diffusing = False
         while self.ST.is_active:
-            if self.ST.run():
-                self.spike_timer_window.show()
-                self.spike_timer_window.update_time(self.ST.time)
-                ST_was_active = True
-            elif ST_was_active:
-                sleep(3)
-                self.spike_timer_window.hide()
-                ST_was_active = False
+            spike_status = self.ST.run()
+            match spike_status:
+                case -1:
+                    if not ST_was_active:
+                        continue
+                    sleep(3)
+                    self.spike_timer_window.hide()
+                    ST_was_active = False
+
+                case 0:
+                    self.spike_timer_window.update_time(self.ST.time)
+
+                    if not ST_was_active:
+                        self.spike_timer_window.show()
+                        ST_was_active = True
+                    diffusing = False
+
+                case 1:
+                    if not diffusing:
+                        diffusing = True
+                        self.spike_timer_window.update_finish_time(round(self.ST.time - 7, 1))
+
+                case 2:
+                    if not diffusing:
+                        diffusing = True
+                        self.spike_timer_window.update_finish_time(round(self.ST.time - 3.5, 1))

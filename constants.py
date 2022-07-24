@@ -59,7 +59,9 @@ PIXEL_LOCATIONS = {
     "play_screen_1": (16, 10),  # Top left corner Valorant logo
     "in_game_0": (643, 1027),  # 0 in the 100 hp indicator
     "in_game_1": (1115, 279),  # Bottom right corner of buy phase indicator
-    "spike_plant": (957, 25)  # Spike plant indicator on top of screen
+    "spike_plant": (957, 25),  # Spike plant indicator on top of screen
+    "spike_diffuse_full": (833, 183),  # Left side of diffuse indicator
+    "spike_diffuse_half": (962, 183),  # Center of diffuse indicator
 }
 
 # RGB values for detection pictures
@@ -73,7 +75,8 @@ RGB_VALUES = {
     "spike_plant_0": (230, 0, 0),
     "spike_plant_1": (170, 0, 0),
     "spike_plant_2": (169, 0, 0),
-    "spike_plant_3": (124, 0, 0)
+    "spike_plant_3": (124, 0, 0),
+    "spike_diffuse": (235, 238, 178)
 }
 
 # Pixel locations of buttons to click
