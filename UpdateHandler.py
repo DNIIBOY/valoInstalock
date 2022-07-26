@@ -38,6 +38,8 @@ class UpdateHandler:
             elif current_digit < latest_digit:
                 return False
 
+        return False
+
 
 def get_latest_version() -> str:
     try:
@@ -48,4 +50,6 @@ def get_latest_version() -> str:
 
 
 if __name__ == '__main__':
+    UH = UpdateHandler()
+    print(UH.is_future_version())
     print(get_latest_version())
