@@ -61,19 +61,4 @@ Current features:
 1. Configurable delay time to allow for choice between speed of the instalocker, and system ressources being utilized
 
 ## Future plans
-
-1. Autobuy first round
-
-- Buy pistol and armor automatically, based on your choices
-
-2. Bomb timer
-
-- When spike is planted, show a popup, with the current number of seconds until detonation
-
-3. Autobuy every round
-
-- Have your preferred weapons bought every time you respawn, in case you are not active at the time
-
-4. Backup plan if agent was selected by inhuman man
-
-- Either dodge or choose a backup agent
+All future plans can be found in the <a href = "https://github.com/DNIIBOY/valoInstalock/issues">issues</a> tab.
