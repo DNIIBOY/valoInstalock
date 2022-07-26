@@ -48,5 +48,4 @@ def get_latest_version() -> str:
 
 
 if __name__ == '__main__':
-    UH = UpdateHandler()
-    print(UH.is_latest_version())
+    print(get_latest_version())
