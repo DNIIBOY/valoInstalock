@@ -26,7 +26,6 @@ class SpikeTimerWindow(Canvas):
             fg="green",
         )
         self.timer_label.pack(padx=10, pady=5)
-        # self.place(relx=0.35, rely=0.2, relwidth=0.3, height=200)
 
     def update_time(self, new_time: float) -> None:
         """
@@ -50,12 +49,18 @@ class SpikeTimerWindow(Canvas):
         """
         Update the finish time and show it
         """
-        new_color = "green" if new_time > 0 else "red"
+        new_color = "#ebeeb2" if new_time > 0 else "red"
         self.finish_time_label.configure(
             text=new_time,
             fg=new_color,
         )
         self.finish_time_label.pack(padx=10, pady=9, side=BOTTOM)
+
+    def hide_finish_time(self) -> None:
+        """
+        Hide the finish time
+        """
+        self.finish_time_label.place_forget()
 
     def show(self) -> None:
         """
@@ -67,5 +72,5 @@ class SpikeTimerWindow(Canvas):
         """
         Hide the timer
         """
-        self.finish_time_label.place_forget()
+        self.hide_finish_time()
         self.place_forget()

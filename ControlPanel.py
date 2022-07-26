@@ -296,6 +296,7 @@ class ControlPanel(Tk):
             spike_status = self.ST.run()
             match spike_status:
                 case -1:
+                    diffusing = False
                     if not ST_was_active:
                         continue
                     sleep(3)
@@ -308,14 +309,19 @@ class ControlPanel(Tk):
                     if not ST_was_active:
                         self.spike_timer_window.show()
                         ST_was_active = True
-                    diffusing = False
+
+                    if diffusing:
+                        diffusing = False
+                        self.spike_timer_window.hide_finish_time()
 
                 case 1:
+                    self.spike_timer_window.update_time(self.ST.time)
                     if not diffusing:
                         diffusing = True
                         self.spike_timer_window.update_finish_time(round(self.ST.time - 7, 1))
 
                 case 2:
+                    self.spike_timer_window.update_time(self.ST.time)
                     if not diffusing:
                         diffusing = True
                         self.spike_timer_window.update_finish_time(round(self.ST.time - 3.5, 1))
