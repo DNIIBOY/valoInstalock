@@ -292,12 +292,12 @@ class ControlPanel(Tk):
         self.ST = SpikeTimer(self.settings["img_delay"])
         self.ST.is_active = True
         ST_was_active = False
-        diffusing = False
+        diffuse_status = 0  # 0 for no diffuse, 1 for full defuse, 2 for half defuse
         while self.ST.is_active:
             spike_status = self.ST.run()
             match spike_status:
                 case -1:
-                    diffusing = False
+                    diffuse_status = 0
                     if not ST_was_active:
                         continue
                     sleep(3)
@@ -311,19 +311,19 @@ class ControlPanel(Tk):
                         self.spike_timer_window.show()
                         ST_was_active = True
 
-                    if diffusing:
-                        diffusing = False
+                    if diffuse_status:
+                        diffuse_status = 0
                         self.spike_timer_window.hide_finish_time()
                     self.spike_timer_window.hide_finish_time()
 
                 case 1:
                     self.spike_timer_window.update_time(self.ST.time)
-                    if not diffusing:
-                        diffusing = True
+                    if not diffuse_status:
+                        diffuse_status = 1
                         self.spike_timer_window.update_finish_time(round(self.ST.time - 7, 1))
 
                 case 2:
                     self.spike_timer_window.update_time(self.ST.time)
-                    if not diffusing:
-                        diffusing = True
+                    if diffuse_status != 2:
+                        diffuse_status = 2
                         self.spike_timer_window.update_finish_time(round(self.ST.time - 3.5, 1))

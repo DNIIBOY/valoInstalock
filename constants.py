@@ -1,7 +1,7 @@
 from os.path import dirname, realpath
 import sys
 
-VERSION_NUMBER = "v1.3.1"
+VERSION_NUMBER = "v1.3.2"
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
@@ -63,7 +63,7 @@ PIXEL_LOCATIONS = {
     "in_game_1": (1115, 279),  # Bottom right corner of buy phase indicator
     "spike_plant": (957, 25),  # Spike plant indicator on top of screen
     "spike_diffuse_full": (833, 183),  # Left side of diffuse indicator
-    "spike_diffuse_half": (962, 183),  # Center of diffuse indicator
+    "spike_diffuse_half": (961, 183),  # Center of diffuse indicator
 }
 
 # RGB values for detection pictures
