@@ -295,7 +295,6 @@ class ControlPanel(Tk):
         diffusing = False
         while self.ST.is_active:
             spike_status = self.ST.run()
-            print(spike_status)
             match spike_status:
                 case -1:
                     diffusing = False
