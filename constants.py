@@ -1,6 +1,8 @@
 from os.path import dirname, realpath
 import sys
 
+VERSION_NUMBER = "v1.3.1"
+
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
     CURRENT_DIR = dirname(sys.executable)
