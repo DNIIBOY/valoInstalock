@@ -21,6 +21,7 @@ class AutoBuyer:
             return False
         self.calculate_clicks()
         self.buy_items()
+        self.is_active = False  # Become inactive, when the task is complete
         return True
 
     def wait_for_game(self) -> bool:

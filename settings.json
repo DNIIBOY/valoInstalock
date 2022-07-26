@@ -24,15 +24,16 @@
     "img_delay": 0.1,
     "play_screen_delay_time": 3.0,
     "auto_restart": true,
-    "auto_buy": false,
+    "show_spike_timer": true,
+    "auto_buy": true,
     "shop_settings": {
-        "pistol": "Shorty",
+        "pistol": "Ghost",
         "ability_counts": [
             0,
-            0,
             1,
+            0,
             0
         ],
-        "buy_armor": true
+        "buy_armor": false
     }
 }
