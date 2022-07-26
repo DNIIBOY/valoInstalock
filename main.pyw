@@ -7,7 +7,10 @@ if __name__ == '__main__':
     CP = ControlPanel()
 
     print("Starting control panel...")
-    CP.start()
+    try:
+        CP.start()
+    except KeyboardInterrupt:
+        pass
 
     print("Terminating program...")
     print("Closing instalocker thread...")
