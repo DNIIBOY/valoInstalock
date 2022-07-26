@@ -60,7 +60,7 @@ class SpikeTimerWindow(Canvas):
         """
         Hide the finish time
         """
-        self.finish_time_label.place_forget()
+        self.finish_time_label.pack_forget()
 
     def show(self) -> None:
         """

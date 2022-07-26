@@ -218,6 +218,7 @@ class ControlPanel(Tk):
         """
         Stop the instalocker program
         """
+        self.spike_timer_window.hide()
         for module in [self.AB, self.IL, self.ST]:
             try:
                 module.is_active = False
@@ -294,6 +295,7 @@ class ControlPanel(Tk):
         diffusing = False
         while self.ST.is_active:
             spike_status = self.ST.run()
+            print(spike_status)
             match spike_status:
                 case -1:
                     diffusing = False
@@ -313,6 +315,7 @@ class ControlPanel(Tk):
                     if diffusing:
                         diffusing = False
                         self.spike_timer_window.hide_finish_time()
+                    self.spike_timer_window.hide_finish_time()
 
                 case 1:
                     self.spike_timer_window.update_time(self.ST.time)
