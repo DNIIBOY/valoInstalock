@@ -1,7 +1,7 @@
 from os.path import dirname, realpath
 import sys
 
-VERSION_NUMBER = "v1.3.2"
+VERSION_NUMBER = "v1.3.3"
 
 # determine if application is a script file or frozen exe
 if getattr(sys, 'frozen', False):
@@ -17,6 +17,7 @@ AGENT_LIST = [
     "Chamber",
     "Cypher",
     "Fade",
+    "Harbor"
     "Jett",
     "KAY/O",
     "Killjoy",
